@@ -1,0 +1,52 @@
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+
+module.exports = {
+  entry: {
+    app: path.resolve(__dirname, 'src', 'index.tsx'),
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'public', 'index.html'),
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.(tsx|ts|jsx)?$/,
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+              experimentalWatchApi: true,
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(svg|ttf|eot|woff|woff2)$/,
+        type: 'asset/resource',
+      },
+      {
+        test: /\.(jpg|jpeg|png|gif)$/i,
+        type: 'asset/resource',
+      },
+    ],
+  },
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
+    clean: true,
+  },
+  resolve: {
+    extensions: ['.js', '.ts', '.tsx', '.jsx'],
+    plugins: [
+      new TsconfigPathsPlugin({
+        configFile: path.resolve(__dirname, './tsconfig.json'),
+      }),
+    ],
+  },
+};
