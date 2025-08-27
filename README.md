@@ -1,6 +1,6 @@
 # Design Pattern Comparison
 
-A comparison of implementation patterns between two applications: the production-ready **image-builder-frontend** and the prototype **image-builder-UX**.
+A comparison of implementation patterns between two applications: the production-ready **frontend** and the prototype **UX**.
 
 ## Project Overview
 
@@ -14,7 +14,7 @@ This project showcases side-by-side comparisons of key architectural decisions a
 
 ## Architecture Comparison
 
-### image-builder-frontend (Production)
+### frontend (Production)
 - **PatternFly 4.x** components
 - **Redux + RTK Query** state management  
 - **Multi-step wizard** workflows (15+ steps)
@@ -22,7 +22,7 @@ This project showcases side-by-side comparisons of key architectural decisions a
 - **Enterprise data tables** with sorting, filtering, pagination
 - **Detailed error handling** with structured error objects
 
-### image-builder-UX (Prototype)  
+### UX (Prototype)  
 - **PatternFly 4.x** components
 - **React useState** hooks for state management
 - **Modal-based** workflows with tabs
