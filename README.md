@@ -1,10 +1,10 @@
-# Image Builder Comparison Portfolio
+# Design Pattern Comparison
 
-A portfolio project that compares implementation patterns between two image builder applications: the production-ready **image-builder-frontend** and the prototype **image-builder-UX**.
+A comparison of implementation patterns between two applications: the production-ready **image-builder-frontend** and the prototype **image-builder-UX**.
 
 ## Project Overview
 
-This portfolio showcases side-by-side comparisons of key architectural decisions and implementation patterns:
+This project showcases side-by-side comparisons of key architectural decisions and implementation patterns:
 
 - **Wizard vs Modal workflows**
 - **Redux + RTK Query vs React useState**
@@ -30,7 +30,7 @@ This portfolio showcases side-by-side comparisons of key architectural decisions
 - **Custom HTML tables** with simple interactions
 - **Streamlined error handling** with toast notifications
 
-## Portfolio Structure
+## Project Structure
 
 ```
 /src
@@ -39,7 +39,7 @@ This portfolio showcases side-by-side comparisons of key architectural decisions
 │   ├── AppNavigation.tsx          # Sidebar navigation
 │   └── AppRoutes.tsx             # Route configuration
 ├── components/
-│   ├── Overview.tsx              # Portfolio introduction
+│   ├── Overview.tsx              # Project introduction
 │   ├── WizardComparison.tsx      # Wizard vs Modal patterns
 │   ├── StateManagementComparison.tsx  # Redux vs useState
 │   ├── FormValidationComparison.tsx   # Validation systems
@@ -94,7 +94,7 @@ Built with **PatternFly 5.x** components for modern design consistency and acces
 
 ## Learning Outcomes
 
-This portfolio demonstrates:
+This project demonstrates:
 - Architectural trade-offs between enterprise and prototype approaches
 - State management pattern comparisons
 - Form validation strategy differences  
@@ -103,4 +103,4 @@ This portfolio demonstrates:
 
 ---
 
-*This portfolio project was created to showcase different implementation approaches for similar functionality, helping developers understand when to choose different architectural patterns.*
+*This project compares different implementation approaches for similar functionality, helping developers understand when to choose different architectural patterns.*
