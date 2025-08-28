@@ -47,12 +47,7 @@ interface Package {
   end_date?: string;
 }
 
-interface PackageGroup {
-  name: string;
-  description: string;
-  repository: 'distro' | 'custom' | 'recommended';
-  package_list: string[];
-}
+
 
 // Mock data for demonstration
 const mockPackages: Package[] = [
@@ -68,26 +63,7 @@ const mockPackages: Package[] = [
   { name: 'python3', summary: 'Python 3 programming language', repository: 'distro' },
 ];
 
-const mockGroups: PackageGroup[] = [
-  {
-    name: 'development-tools',
-    description: 'Development tools including compilers, debuggers, and build tools',
-    repository: 'distro',
-    package_list: ['gcc', 'make', 'cmake', 'git', 'vim', 'emacs']
-  },
-  {
-    name: 'web-server',
-    description: 'Web server packages and related tools',
-    repository: 'distro',
-    package_list: ['httpd', 'nginx', 'php', 'mysql']
-  },
-  {
-    name: 'system-tools',
-    description: 'System administration and monitoring tools',
-    repository: 'distro',
-    package_list: ['htop', 'iotop', 'netstat', 'tcpdump']
-  }
-];
+
 
 // Mock repositories data
 const mockRepositories = [
@@ -154,8 +130,8 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const [perPage, setPerPage] = React.useState(10);
   const [page, setPage] = React.useState(1);
   const [selectedPackages, setSelectedPackages] = React.useState<Set<string>>(new Set());
-  const [selectedGroups, setSelectedGroups] = React.useState<Set<string>>(new Set());
-  const [expandedGroups, setExpandedGroups] = React.useState<Set<string>>(new Set());
+
+
   const [selectedRepositories, setSelectedRepositories] = React.useState<Set<string>>(new Set());
   const [reposToggleSelected, setReposToggleSelected] = React.useState<'toggle-repos-all' | 'toggle-repos-selected'>('toggle-repos-all');
   const [hasViewedSelected, setHasViewedSelected] = React.useState(false);
@@ -173,12 +149,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     );
   }, [searchTerm]);
 
-  const allFilteredGroups = React.useMemo(() => {
-    return mockGroups.filter(group =>
-      group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      group.description.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [searchTerm]);
+
 
   const filteredPackages = React.useMemo(() => {
     let filtered = mockPackages.filter(pkg =>
@@ -201,32 +172,13 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     return filtered;
   }, [searchTerm, toggleSelected, selectedPackages, hasViewedPackagesSelected]);
 
-  const filteredGroups = React.useMemo(() => {
-    let filtered = mockGroups.filter(group =>
-      group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      group.description.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    
-    // Apply toggle filter
-    if (toggleSelected === 'toggle-selected') {
-      // Show only selected groups
-      filtered = filtered.filter(group => selectedGroups.has(group.name));
-    } else {
-      // "Available" toggle - hide selected groups only after user has viewed "Selected" list
-      if (hasViewedPackagesSelected) {
-        filtered = filtered.filter(group => !selectedGroups.has(group.name));
-      }
-      // If hasn't viewed "Selected" yet, show all groups
-    }
-    
-    return filtered;
-  }, [searchTerm, toggleSelected, selectedGroups, hasViewedPackagesSelected]);
+
 
   // Pagination
   const startIndex = (page - 1) * perPage;
   const endIndex = startIndex + perPage;
   const paginatedPackages = filteredPackages.slice(startIndex, endIndex);
-  const paginatedGroups = filteredGroups.slice(startIndex, endIndex);
+
 
   // Event handlers
   const handleSearch = (event: React.FormEvent<HTMLInputElement>, value: string) => {
@@ -271,28 +223,9 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     }
   };
 
-  const handleGroupSelect = (event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
-    const groupName = event.currentTarget.getAttribute('data-group-name');
-    if (groupName) {
-      const newSelected = new Set(selectedGroups);
-      if (checked) {
-        newSelected.add(groupName);
-      } else {
-        newSelected.delete(groupName);
-      }
-      setSelectedGroups(newSelected);
-    }
-  };
 
-  const handleGroupExpand = (groupName: string) => {
-    const newExpanded = new Set(expandedGroups);
-    if (newExpanded.has(groupName)) {
-      newExpanded.delete(groupName);
-    } else {
-      newExpanded.add(groupName);
-    }
-    setExpandedGroups(newExpanded);
-  };
+
+
 
   const handleRepositorySelect = (event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
     const repoId = event.currentTarget.getAttribute('id');
@@ -337,9 +270,9 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     setPage(1);
   };
 
-  const totalAvailableItems = mockPackages.length + mockGroups.length;
-  const totalItems = filteredPackages.length + filteredGroups.length;
-  const selectedCount = selectedPackages.size + selectedGroups.size;
+  const totalAvailableItems = mockPackages.length;
+  const totalItems = filteredPackages.length;
+  const selectedCount = selectedPackages.size;
   
   // Filtered repositories based on toggle state
   const filteredRepositories = React.useMemo(() => {
@@ -368,9 +301,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   console.log('Repos toggle state:', { reposToggleSelected, selectedRepositories: selectedRepositories.size });
   console.log('Filtered data:', { 
     packages: filteredPackages.length, 
-    groups: filteredGroups.length,
-    selectedPackages: Array.from(selectedPackages),
-    selectedGroups: Array.from(selectedGroups)
+    selectedPackages: Array.from(selectedPackages)
   });
 
   const handleStepChange = (stepId: string) => {
@@ -505,10 +436,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           </p>
         </div>
       
-        <Alert variant={AlertVariant.info} isInline title="Search for package groups">
-          Search for package groups by starting your search with the '@' character. 
-          A single '@' as search input lists all available package groups.
-        </Alert>
+
 
         {/* Search and Controls */}
         <div style={{ margin: '20px 0', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -524,7 +452,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           
           <ToggleGroup>
             <ToggleGroupItem
-              text={`Available${hasViewedPackagesSelected ? ` (${(paginatedGroups.length + paginatedPackages.length) - selectedCount})` : (paginatedGroups.length + paginatedPackages.length) ? ` (${paginatedGroups.length + paginatedPackages.length})` : ''}`}
+              text={`Available${searchTerm && filteredPackages.length > 0 ? (hasViewedPackagesSelected ? ` (${Math.max(0, filteredPackages.length - selectedCount)})` : ` (${filteredPackages.length})`) : ''}`}
               buttonId="toggle-available"
               isSelected={toggleSelected === 'toggle-available'}
               onChange={handleToggleChange}
