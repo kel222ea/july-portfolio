@@ -40,7 +40,7 @@ import { RepositoryIcon, PackageIcon } from '@patternfly/react-icons';
 interface Package {
   name: string;
   summary: string;
-  repository: 'distro' | 'custom' | 'recommended';
+  repository: 'distro' | 'custom' | 'recommended' | 'included' | 'other';
   type?: string;
   module_name?: string;
   stream?: string;
@@ -49,18 +49,162 @@ interface Package {
 
 
 
-// Mock data for demonstration
-const mockPackages: Package[] = [
-  { name: 'httpd', summary: 'Apache HTTP Server', repository: 'distro' },
-  { name: 'nginx', summary: 'High performance web server', repository: 'distro' },
-  { name: 'postgresql', summary: 'PostgreSQL database server', repository: 'distro' },
-  { name: 'docker', summary: 'Docker container runtime', repository: 'distro' },
-  { name: 'ansible', summary: 'IT automation tool', repository: 'distro' },
-  { name: 'git', summary: 'Version control system', repository: 'distro' },
-  { name: 'vim', summary: 'Vi IMproved text editor', repository: 'distro' },
-  { name: 'wget', summary: 'Retrieve files from the web', repository: 'distro' },
-  { name: 'curl', summary: 'Transfer data from or to a server', repository: 'distro' },
-  { name: 'python3', summary: 'Python 3 programming language', repository: 'distro' },
+// Mock data for demonstration - Included repositories (core system packages)
+const includedRepoPackages: Package[] = [
+  { name: 'httpd', summary: 'Apache HTTP Server', repository: 'included' },
+  { name: 'nginx', summary: 'High performance web server', repository: 'included' },
+  { name: 'postgresql', summary: 'PostgreSQL database server', repository: 'included' },
+  { name: 'docker', summary: 'Docker container runtime', repository: 'included' },
+  { name: 'ansible', summary: 'IT automation tool', repository: 'included' },
+  { name: 'git', summary: 'Version control system', repository: 'included' },
+  { name: 'vim', summary: 'Vi IMproved text editor', repository: 'included' },
+  { name: 'wget', summary: 'Retrieve files from the web', repository: 'included' },
+  { name: 'curl', summary: 'Transfer data from or to a server', repository: 'included' },
+  { name: 'python3', summary: 'Python 3 programming language', repository: 'included' },
+  { name: 'ssh', summary: 'Secure Shell client and server', repository: 'included' },
+  { name: 'systemd', summary: 'System and service manager', repository: 'included' },
+  { name: 'sudo', summary: 'Execute command as superuser', repository: 'included' },
+  { name: 'sed', summary: 'Stream editor for filtering text', repository: 'included' },
+  { name: 'screen', summary: 'Terminal multiplexer', repository: 'included' },
+  { name: 'strace', summary: 'Trace system calls and signals', repository: 'included' },
+  { name: 'samba', summary: 'SMB/CIFS file and print server', repository: 'included' },
+  { name: 'snmp', summary: 'Simple Network Management Protocol', repository: 'included' },
+  { name: 'squid', summary: 'Web proxy cache', repository: 'included' },
+  { name: 'sendmail', summary: 'Mail transfer agent', repository: 'included' },
+  { name: 'apache', summary: 'Apache web server', repository: 'included' },
+  { name: 'bind', summary: 'Berkeley Internet Name Domain', repository: 'included' },
+  { name: 'bash', summary: 'Bourne Again Shell', repository: 'included' },
+  { name: 'busybox', summary: 'Multi-call binary', repository: 'included' },
+  { name: 'bc', summary: 'Arbitrary precision calculator', repository: 'included' },
+  { name: 'bzip2', summary: 'Block-sorting file compressor', repository: 'included' },
+  { name: 'buildah', summary: 'Container image builder', repository: 'included' },
+  { name: 'cron', summary: 'Daemon for executing scheduled commands', repository: 'included' },
+  { name: 'cups', summary: 'Common Unix Printing System', repository: 'included' },
+  { name: 'clamav', summary: 'Antivirus software', repository: 'included' },
+  { name: 'cryptsetup', summary: 'Disk encryption setup utility', repository: 'included' },
+  { name: 'dhcpd', summary: 'DHCP server daemon', repository: 'included' },
+  { name: 'dnsmasq', summary: 'Lightweight DNS forwarder', repository: 'included' },
+  { name: 'dovecot', summary: 'IMAP and POP3 server', repository: 'included' },
+  { name: 'fail2ban', summary: 'Intrusion prevention software', repository: 'included' },
+  { name: 'firewalld', summary: 'Dynamic firewall daemon', repository: 'included' },
+  { name: 'freeradius', summary: 'RADIUS server', repository: 'included' },
+  { name: 'gcc', summary: 'GNU Compiler Collection', repository: 'included' },
+  { name: 'glibc', summary: 'GNU C Library', repository: 'included' },
+  { name: 'gnupg', summary: 'GNU Privacy Guard', repository: 'included' },
+  { name: 'haproxy', summary: 'Load balancer and proxy', repository: 'included' },
+  { name: 'httpd-tools', summary: 'Apache HTTP Server tools', repository: 'included' },
+  { name: 'iptables', summary: 'Linux packet filtering', repository: 'included' },
+  { name: 'java', summary: 'Java Runtime Environment', repository: 'included' },
+  { name: 'kernel', summary: 'Linux kernel', repository: 'included' },
+  { name: 'libvirt', summary: 'Virtualization library', repository: 'included' },
+  { name: 'logrotate', summary: 'Log file rotation utility', repository: 'included' },
+  { name: 'mariadb', summary: 'Database server', repository: 'included' },
+  { name: 'memcached', summary: 'Memory caching daemon', repository: 'included' },
+  { name: 'nagios', summary: 'Network monitoring system', repository: 'included' },
+  { name: 'netcat', summary: 'Network utility', repository: 'included' },
+  { name: 'openssh', summary: 'OpenSSH client and server', repository: 'included' },
+  { name: 'openvpn', summary: 'VPN solution', repository: 'included' },
+  { name: 'php', summary: 'PHP scripting language', repository: 'included' },
+  { name: 'podman', summary: 'Container engine', repository: 'included' },
+  { name: 'qemu', summary: 'Machine emulator and virtualizer', repository: 'included' },
+  { name: 'redis', summary: 'In-memory data structure store', repository: 'included' },
+  { name: 'rsyslog', summary: 'System logging service', repository: 'included' },
+  { name: 'rpm', summary: 'RPM Package Manager', repository: 'included' },
+  { name: 'selinux', summary: 'Security-Enhanced Linux', repository: 'included' },
+  { name: 'tcpdump', summary: 'Network packet analyzer', repository: 'included' },
+  { name: 'tmux', summary: 'Terminal multiplexer', repository: 'included' },
+  { name: 'unzip', summary: 'Extract files from ZIP archives', repository: 'included' },
+  { name: 'varnish', summary: 'HTTP accelerator', repository: 'included' },
+  { name: 'wireshark', summary: 'Network protocol analyzer', repository: 'included' },
+  { name: 'xinetd', summary: 'Extended Internet Services daemon', repository: 'included' },
+  { name: 'yum', summary: 'Package manager', repository: 'included' },
+  { name: 'zsh', summary: 'Z shell', repository: 'included' },
+];
+
+// Mock data for other repositories (EPEL, custom repos, etc.)
+const otherRepoPackages: Package[] = [
+  { name: 'epel-release', summary: 'Extra Packages for Enterprise Linux', repository: 'other' },
+  { name: 'elasticsearch', summary: 'Distributed search and analytics engine', repository: 'other' },
+  { name: 'kibana', summary: 'Data visualization and exploration platform', repository: 'other' },
+  { name: 'logstash', summary: 'Data processing pipeline', repository: 'other' },
+  { name: 'grafana', summary: 'Metrics visualization and alerting', repository: 'other' },
+  { name: 'prometheus', summary: 'Monitoring system and time series database', repository: 'other' },
+  { name: 'nodejs', summary: 'JavaScript runtime built on Chrome V8', repository: 'other' },
+  { name: 'npm', summary: 'Node.js package manager', repository: 'other' },
+  { name: 'ruby', summary: 'Object-oriented programming language', repository: 'other' },
+  { name: 'gems', summary: 'Ruby package manager', repository: 'other' },
+  { name: 'go', summary: 'Go programming language', repository: 'other' },
+  { name: 'rust', summary: 'Systems programming language', repository: 'other' },
+  { name: 'cargo', summary: 'Rust package manager', repository: 'other' },
+  { name: 'terraform', summary: 'Infrastructure as code tool', repository: 'other' },
+  { name: 'packer', summary: 'Machine image creation tool', repository: 'other' },
+  { name: 'vagrant', summary: 'Development environment manager', repository: 'other' },
+  { name: 'chef', summary: 'Configuration management tool', repository: 'other' },
+  { name: 'puppet', summary: 'Configuration management platform', repository: 'other' },
+  { name: 'salt', summary: 'Infrastructure management tool', repository: 'other' },
+  { name: 'jenkins', summary: 'Automation server', repository: 'other' },
+  { name: 'gitlab', summary: 'Git repository management', repository: 'other' },
+  { name: 'jira', summary: 'Issue and project tracking', repository: 'other' },
+  { name: 'confluence', summary: 'Team collaboration software', repository: 'other' },
+  { name: 'bitbucket', summary: 'Git code hosting service', repository: 'other' },
+  { name: 'sonarqube', summary: 'Code quality and security platform', repository: 'other' },
+  { name: 'nexus', summary: 'Repository manager', repository: 'other' },
+  { name: 'artifactory', summary: 'Binary repository manager', repository: 'other' },
+  { name: 'maven', summary: 'Build automation tool', repository: 'other' },
+  { name: 'gradle', summary: 'Build automation system', repository: 'other' },
+  { name: 'ant', summary: 'Java build tool', repository: 'other' },
+  { name: 'make', summary: 'Build automation utility', repository: 'other' },
+  { name: 'cmake', summary: 'Cross-platform build system', repository: 'other' },
+  { name: 'ninja', summary: 'Small build system', repository: 'other' },
+  { name: 'bazel', summary: 'Fast, scalable build system', repository: 'other' },
+  { name: 'scons', summary: 'Software construction tool', repository: 'other' },
+  { name: 'autotools', summary: 'GNU build system', repository: 'other' },
+  { name: 'meson', summary: 'Build system generator', repository: 'other' },
+  { name: 'buck', summary: 'Build system', repository: 'other' },
+  { name: 'pants', summary: 'Build system for monorepos', repository: 'other' },
+  { name: 'please', summary: 'High-performance build system', repository: 'other' },
+  { name: 'sbt', summary: 'Scala build tool', repository: 'other' },
+  { name: 'leiningen', summary: 'Clojure project automation', repository: 'other' },
+  { name: 'cabal', summary: 'Haskell build system', repository: 'other' },
+  { name: 'stack', summary: 'Haskell development tool', repository: 'other' },
+  { name: 'pip', summary: 'Python package installer', repository: 'other' },
+  { name: 'conda', summary: 'Package and environment manager', repository: 'other' },
+  { name: 'poetry', summary: 'Python dependency management', repository: 'other' },
+  { name: 'pipenv', summary: 'Python virtual environment manager', repository: 'other' },
+  { name: 'virtualenv', summary: 'Python virtual environment', repository: 'other' },
+  { name: 'venv', summary: 'Python virtual environment', repository: 'other' },
+  { name: 'pyenv', summary: 'Python version manager', repository: 'other' },
+  { name: 'rvm', summary: 'Ruby version manager', repository: 'other' },
+  { name: 'rbenv', summary: 'Ruby version manager', repository: 'other' },
+  { name: 'nvm', summary: 'Node.js version manager', repository: 'other' },
+  { name: 'fnm', summary: 'Fast Node.js version manager', repository: 'other' },
+  { name: 'gvm', summary: 'Go version manager', repository: 'other' },
+  { name: 'g', summary: 'Go version manager', repository: 'other' },
+  { name: 'sdkman', summary: 'Software development kit manager', repository: 'other' },
+  { name: 'asdf', summary: 'Extendable version manager', repository: 'other' },
+  { name: 'jenv', summary: 'Java environment manager', repository: 'other' },
+  { name: 'jabba', summary: 'Java version manager', repository: 'other' },
+  { name: 'sdk', summary: 'Software development kit', repository: 'other' },
+  { name: 'toolbox', summary: 'Development environment container', repository: 'other' },
+  { name: 'devcontainer', summary: 'Development container', repository: 'other' },
+  { name: 'codespace', summary: 'Cloud development environment', repository: 'other' },
+  { name: 'gitpod', summary: 'Cloud development environment', repository: 'other' },
+  { name: 'replit', summary: 'Online IDE and hosting platform', repository: 'other' },
+  { name: 'glitch', summary: 'Web app creation platform', repository: 'other' },
+  { name: 'stackblitz', summary: 'Online development environment', repository: 'other' },
+  { name: 'codepen', summary: 'Front-end development playground', repository: 'other' },
+  { name: 'jsfiddle', summary: 'JavaScript code playground', repository: 'other' },
+  { name: 'plunker', summary: 'Online code editor', repository: 'other' },
+  { name: 'runkit', summary: 'Node.js playground', repository: 'other' },
+  { name: 'observable', summary: 'Interactive notebook platform', repository: 'other' },
+  { name: 'jupyter', summary: 'Interactive computing platform', repository: 'other' },
+  { name: 'colab', summary: 'Google Colaboratory', repository: 'other' },
+  { name: 'kaggle', summary: 'Data science platform', repository: 'other' },
+  { name: 'databricks', summary: 'Data engineering platform', repository: 'other' },
+  { name: 'snowflake', summary: 'Cloud data platform', repository: 'other' },
+  { name: 'bigquery', summary: 'Google BigQuery', repository: 'other' },
+  { name: 'redshift', summary: 'Amazon Redshift', repository: 'other' },
+  { name: 'synapse', summary: 'Azure Synapse Analytics', repository: 'other' },
 ];
 
 
@@ -141,21 +285,23 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const [activeTabKey, setActiveTabKey] = React.useState('included-repos');
 
 
-  // Filtered data based on search
-  const allFilteredPackages = React.useMemo(() => {
-    return mockPackages.filter(pkg =>
-      pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pkg.summary.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [searchTerm]);
-
-
-
+  // Filtered data based on search and active tab
   const filteredPackages = React.useMemo(() => {
-    let filtered = mockPackages.filter(pkg =>
-      pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pkg.summary.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Choose the appropriate package array based on active tab
+    const sourcePackages = activeTabKey === 'included-repos' ? includedRepoPackages : otherRepoPackages;
+    
+    let filtered = sourcePackages.filter(pkg => {
+      const nameMatch = pkg.name.toLowerCase().startsWith(searchTerm.toLowerCase());
+      const summaryMatch = pkg.summary.toLowerCase().startsWith(searchTerm.toLowerCase());
+      return nameMatch || summaryMatch;
+    });
+    
+    return filtered;
+  }, [searchTerm, activeTabKey]);
+
+  // Apply toggle filtering separately
+  const toggleFilteredPackages = React.useMemo(() => {
+    let filtered = [...filteredPackages];
     
     // Apply toggle filter
     if (toggleSelected === 'toggle-selected') {
@@ -170,14 +316,13 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     }
     
     return filtered;
-  }, [searchTerm, toggleSelected, selectedPackages, hasViewedPackagesSelected]);
-
+  }, [filteredPackages, toggleSelected, selectedPackages, hasViewedPackagesSelected]);
 
 
   // Pagination
   const startIndex = (page - 1) * perPage;
   const endIndex = startIndex + perPage;
-  const paginatedPackages = filteredPackages.slice(startIndex, endIndex);
+  const paginatedPackages = toggleFilteredPackages.slice(startIndex, endIndex);
 
 
   // Event handlers
@@ -189,6 +334,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const handleClear = () => {
     setSearchTerm('');
     setPage(1);
+    // Don't clear selected packages - they should persist even after clearing search
   };
 
   const handleToggleChange = (event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>, selected: boolean) => {
@@ -270,8 +416,13 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     setPage(1);
   };
 
-  const totalAvailableItems = mockPackages.length;
-  const totalItems = filteredPackages.length;
+  // Calculate totals based on active tab
+  const getTotalAvailableItems = () => {
+    return activeTabKey === 'included-repos' ? includedRepoPackages.length : otherRepoPackages.length;
+  };
+  
+  const totalAvailableItems = getTotalAvailableItems();
+  const totalItems = toggleFilteredPackages.length;
   const selectedCount = selectedPackages.size;
   
   // Filtered repositories based on toggle state
@@ -300,7 +451,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   console.log('Toggle state:', { toggleSelected, selectedCount, totalItems, totalAvailableItems });
   console.log('Repos toggle state:', { reposToggleSelected, selectedRepositories: selectedRepositories.size });
   console.log('Filtered data:', { 
-    packages: filteredPackages.length, 
+    packages: toggleFilteredPackages.length, 
     selectedPackages: Array.from(selectedPackages)
   });
 
@@ -500,7 +651,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         </div>
 
         {/* Packages Display using Table */}
-        {searchTerm ? (
+        {(searchTerm || toggleSelected === 'toggle-selected') ? (
           <Table aria-label="Packages table" variant="compact">
             <Thead>
               <Tr>
