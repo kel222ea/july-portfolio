@@ -524,7 +524,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           
           <ToggleGroup>
             <ToggleGroupItem
-              text={`Available${hasViewedPackagesSelected ? ` (${totalAvailableItems - selectedCount})` : totalAvailableItems ? ` (${totalAvailableItems})` : ''}`}
+              text={`Available${hasViewedPackagesSelected ? ` (${(paginatedGroups.length + paginatedPackages.length) - selectedCount})` : (paginatedGroups.length + paginatedPackages.length) ? ` (${paginatedGroups.length + paginatedPackages.length})` : ''}`}
               buttonId="toggle-available"
               isSelected={toggleSelected === 'toggle-available'}
               onChange={handleToggleChange}
@@ -572,78 +572,48 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         </div>
 
         {/* Packages Display using Table */}
-        <Table aria-label="Packages table" variant="compact">
-          <Thead>
-            <Tr>
-              <Th aria-label="Expand toggle"></Th>
-              <Th aria-label="Select item"></Th>
-              <Th>Name</Th>
-              <Th>Application stream</Th>
-              <Th>Retirement date</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {/* Package Groups */}
-            {paginatedGroups.map((group) => (
-              <React.Fragment key={group.name}>
-                <Tr>
-                  <Td
-                    expand={{
-                      rowIndex: 0,
-                      isExpanded: expandedGroups.has(group.name),
-                      onToggle: () => handleGroupExpand(group.name),
-                      expandId: `${group.name}-expandable`,
-                    }}
-                  />
+        {searchTerm ? (
+          <Table aria-label="Packages table" variant="compact">
+            <Thead>
+              <Tr>
+                <Th aria-label="Select item"></Th>
+                <Th>Name</Th>
+                <Th>Application stream</Th>
+                <Th>Retirement date</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {/* Individual Packages */}
+              {paginatedPackages.map((pkg) => (
+                <Tr key={pkg.name}>
                   <Td>
                     <Checkbox
-                      id={`group-${group.name}`}
-                      isChecked={selectedGroups.has(group.name)}
-                      onChange={(event: React.FormEvent<HTMLInputElement>, checked: boolean) => handleGroupSelect(event, checked)}
-                      aria-label={`Select group ${group.name}`}
-                      data-group-name={group.name}
+                      id={`package-${pkg.name}`}
+                      isChecked={selectedPackages.has(pkg.name)}
+                      onChange={(event: React.FormEvent<HTMLInputElement>, checked: boolean) => handlePackageSelect(event, checked)}
+                      aria-label={`Select package ${pkg.name}`}
+                      data-package-name={pkg.name}
                     />
                   </Td>
                   <Td>
-                    <span style={{ fontWeight: 'bold', color: '#0066cc' }}>@{group.name}</span>
+                    <span style={{ fontWeight: 'bold' }}>{pkg.name}</span>
                   </Td>
-                  <Td>N/A</Td>
-                  <Td>N/A</Td>
+                  <Td>{pkg.stream || 'N/A'}</Td>
+                  <Td>{pkg.end_date || 'N/A'}</Td>
                 </Tr>
-                <Tr isExpanded={expandedGroups.has(group.name)}>
-                  <Td colSpan={5}>
-                    <ExpandableRowContent>
-                      <div style={{ padding: '16px', backgroundColor: '#f8f9fa' }}>
-                        <strong>Description:</strong> {group.description}
-                      </div>
-                    </ExpandableRowContent>
-                  </Td>
-                </Tr>
-              </React.Fragment>
-            ))}
-
-            {/* Individual Packages */}
-            {paginatedPackages.map((pkg) => (
-              <Tr key={pkg.name}>
-                <Td></Td>
-                <Td>
-                  <Checkbox
-                    id={`package-${pkg.name}`}
-                    isChecked={selectedPackages.has(pkg.name)}
-                    onChange={(event: React.FormEvent<HTMLInputElement>, checked: boolean) => handlePackageSelect(event, checked)}
-                    aria-label={`Select package ${pkg.name}`}
-                    data-package-name={pkg.name}
-                  />
-                </Td>
-                <Td>
-                  <span style={{ fontWeight: 'bold' }}>{pkg.name}</span>
-                </Td>
-                <Td>{pkg.stream || 'N/A'}</Td>
-                <Td>{pkg.end_date || 'N/A'}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
+              ))}
+            </Tbody>
+          </Table>
+        ) : (
+          <div style={{ 
+            textAlign: 'center', 
+            padding: '40px', 
+            color: '#666',
+            fontStyle: 'italic'
+          }}>
+            Start typing in the search box to see packages
+          </div>
+        )}
 
         {/* Bottom Pagination */}
         <Pagination
