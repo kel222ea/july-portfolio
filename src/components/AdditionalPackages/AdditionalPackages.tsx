@@ -292,8 +292,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     
     let filtered = sourcePackages.filter(pkg => {
       const nameMatch = pkg.name.toLowerCase().startsWith(searchTerm.toLowerCase());
-      const summaryMatch = pkg.summary.toLowerCase().startsWith(searchTerm.toLowerCase());
-      return nameMatch || summaryMatch;
+      return nameMatch;
     });
     
     return filtered;
