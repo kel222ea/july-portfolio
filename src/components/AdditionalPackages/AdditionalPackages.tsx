@@ -777,114 +777,132 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           </div>
 
           {/* Main Content with Sidebar */}
-          {showAsOneStep ? (
-            /* One Step View - Show all content without navigation */
-            <div style={{ flex: 1, padding: '20px' }}>
-              {/* Custom Repositories Step */}
-              <div style={{ marginBottom: '40px' }}>
-                <div style={{ marginBottom: '20px' }}>
-                  <Title headingLevel="h2" size="lg">
-                    Custom Repositories
-                  </Title>
-                </div>
-                {renderCustomRepositories()}
-              </div>
-
-              {/* Additional Packages Step */}
-              <div>
-                <div style={{ marginBottom: '20px' }}>
-                  <Title headingLevel="h2" size="lg">
-                    Additional Packages
-                  </Title>
-                </div>
-                {renderAdditionalPackages()}
-              </div>
-        </div>
-      ) : (
-        /* Two Step View - Original wizard with sidebar navigation */
-        <div style={{ display: 'flex', flex: 1 }}>
-          {/* Left Sidebar Navigation */}
-          <div style={{ 
-            width: '250px', 
-            backgroundColor: '#f8f9fa', 
-            borderRight: '1px solid #d1d1d1',
-            padding: '20px',
-            overflowY: 'auto',
-            flexShrink: 0
-          }}>
-            <Nav onSelect={(event, itemId) => {
-              const stepId = typeof itemId === 'string' ? itemId : itemId.itemId;
-              handleStepChange(stepId);
+          <div style={{ display: 'flex', flex: 1 }}>
+            {/* Left Sidebar Navigation */}
+            <div style={{ 
+              width: '250px', 
+              backgroundColor: '#f8f9fa', 
+              borderRight: '1px solid #d1d1d1',
+              padding: '20px',
+              overflowY: 'auto',
+              flexShrink: 0
             }}>
-              <NavList>
-                <NavItem 
-                  itemId="custom-repositories" 
-                  isActive={activeStep === 'custom-repositories'}
-                  icon={<RepositoryIcon />}
-                  className="custom-nav-item"
-                >
-                  <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'center',
-                    color: activeStep === 'custom-repositories' ? '#0066cc' : '#333'
-                  }}>
-                    <RepositoryIcon style={{ 
-                      marginRight: '12px', 
-                      color: activeStep === 'custom-repositories' ? '#0066cc' : '#666'
-                    }} />
-                    <span style={{ 
-                      fontWeight: activeStep === 'custom-repositories' ? '600' : '400'
-                    }}>
-                      Step 1: Custom Repositories
-                    </span>
-                  </div>
-                </NavItem>
-                <NavItem 
-                  itemId="additional-packages" 
-                  isActive={activeStep === 'additional-packages'}
-                  icon={<PackageIcon />}
-                  className="custom-nav-item"
-                >
-                  <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'center',
-                    color: activeStep === 'additional-packages' ? '#0066cc' : '#666'
-                  }}>
-                                      <PackageIcon style={{ 
-                    marginRight: '12px', 
-                    color: activeStep === 'additional-packages' ? '#0066cc' : '#666'
-                  }} />
-                    <span style={{ 
-                      fontWeight: activeStep === 'additional-packages' ? '600' : '400'
-                    }}>
-                      Step 2: Additional Packages
-                    </span>
-                  </div>
-                </NavItem>
-              </NavList>
-            </Nav>
-          </div>
+              <Nav onSelect={(event, itemId) => {
+                const stepId = typeof itemId === 'string' ? itemId : itemId.itemId;
+                handleStepChange(stepId);
+              }}>
+                <NavList>
+                  {showAsOneStep ? (
+                    /* Combined Step Navigation */
+                    <NavItem 
+                      itemId="packages-and-repositories" 
+                      isActive={true}
+                      className="custom-nav-item"
+                    >
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center',
+                        color: '#0066cc'
+                      }}>
+                        <PackageIcon style={{ 
+                          marginRight: '12px', 
+                          color: '#0066cc'
+                        }} />
+                        <span style={{ 
+                          fontWeight: '600'
+                        }}>
+                          Packages and Repositories
+                        </span>
+                      </div>
+                    </NavItem>
+                  ) : (
+                    /* Two Step Navigation */
+                    <>
+                      <NavItem 
+                        itemId="custom-repositories" 
+                        isActive={activeStep === 'custom-repositories'}
+                        icon={<RepositoryIcon />}
+                        className="custom-nav-item"
+                      >
+                        <div style={{ 
+                          display: 'flex', 
+                          alignItems: 'center',
+                          color: activeStep === 'custom-repositories' ? '#0066cc' : '#333'
+                        }}>
+                          <RepositoryIcon style={{ 
+                            marginRight: '12px', 
+                            color: activeStep === 'custom-repositories' ? '#0066cc' : '#666'
+                          }} />
+                          <span style={{ 
+                            fontWeight: activeStep === 'custom-repositories' ? '600' : '400'
+                          }}>
+                            Step 1: Custom Repositories
+                          </span>
+                        </div>
+                      </NavItem>
+                      <NavItem 
+                        itemId="additional-packages" 
+                        isActive={activeStep === 'additional-packages'}
+                        icon={<PackageIcon />}
+                        className="custom-nav-item"
+                      >
+                        <div style={{ 
+                          display: 'flex', 
+                          alignItems: 'center',
+                          color: activeStep === 'additional-packages' ? '#0066cc' : '#666'
+                        }}>
+                          <PackageIcon style={{ 
+                            marginRight: '12px', 
+                            color: activeStep === 'additional-packages' ? '#0066cc' : '#666'
+                          }} />
+                          <span style={{ 
+                            fontWeight: activeStep === 'additional-packages' ? '600' : '400'
+                          }}>
+                            Step 2: Additional Packages
+                          </span>
+                        </div>
+                      </NavItem>
+                    </>
+                  )}
+                </NavList>
+              </Nav>
+            </div>
 
           {/* Main Content Area */}
           <div style={{ flex: 1, padding: '20px' }}>
+            {showAsOneStep ? (
+              /* Combined View - Show all content */
+              <>
+                {/* Custom Repositories Step */}
+                <div style={{ marginBottom: '40px' }}>
+                  {renderCustomRepositories()}
+                </div>
 
-            {/* Custom Repositories Step */}
-            <div style={{ 
-              marginBottom: '40px',
-              display: activeStep === 'custom-repositories' ? 'block' : 'none'
-            }}>
-              {renderCustomRepositories()}
-            </div>
+                {/* Additional Packages Step */}
+                <div>
+                  {renderAdditionalPackages()}
+                </div>
+              </>
+            ) : (
+              /* Two Step View - Show content based on active step */
+              <>
+                {/* Custom Repositories Step */}
+                <div style={{ 
+                  marginBottom: '40px',
+                  display: activeStep === 'custom-repositories' ? 'block' : 'none'
+                }}>
+                  {renderCustomRepositories()}
+                </div>
 
-            {/* Additional Packages Step */}
-            <div style={{
-              display: activeStep === 'additional-packages' ? 'block' : 'none'
-            }}>
-              {renderAdditionalPackages()}
-            </div>
+                {/* Additional Packages Step */}
+                <div style={{
+                  display: activeStep === 'additional-packages' ? 'block' : 'none'
+                }}>
+                  {renderAdditionalPackages()}
+                </div>
+              </>
+            )}
           </div>
-        </div>
-      )}
         </div>
       </div>
     </div>
