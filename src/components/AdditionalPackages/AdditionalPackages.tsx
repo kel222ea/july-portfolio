@@ -98,6 +98,59 @@ const mockRepositories = [
 export const AdditionalPackages: React.FunctionComponent = () => {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [toggleSelected, setToggleSelected] = React.useState<'toggle-available' | 'toggle-selected'>('toggle-available');
+
+  // Add custom CSS for navigation styling
+  React.useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .custom-nav-item {
+        margin-bottom: 8px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      /* Target multiple possible PatternFly v5 selectors */
+      .custom-nav-item .pf-c-nav__link,
+      .custom-nav-item .pf-v5-c-nav__link,
+      .custom-nav-item a,
+      .custom-nav-item button {
+        background-color: transparent !important;
+        border: none !important;
+      }
+
+      /* Active state - target multiple selectors */
+      .custom-nav-item.pf-m-current .pf-c-nav__link,
+      .custom-nav-item.pf-m-current .pf-v5-c-nav__link,
+      .custom-nav-item.pf-m-current a,
+      .custom-nav-item.pf-m-current button {
+        background-color: #e7f1ff !important;
+        border: 2px solid #0066cc !important;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 102, 204, 0.1);
+      }
+
+      /* Inactive state - target multiple selectors */
+      .custom-nav-item:not(.pf-m-current) .pf-c-nav__link,
+      .custom-nav-item:not(.pf-m-current) .pf-v5-c-nav__link,
+      .custom-nav-item:not(.pf-m-current) a,
+      .custom-nav-item:not(.pf-m-current) button {
+        background-color: #ffffff !important;
+        border: 2px solid #d1d1d1 !important;
+        border-radius: 6px;
+      }
+
+      /* Nuclear option: override ALL possible PatternFly backgrounds */
+      .custom-nav-item * {
+        background-color: inherit !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
   const [perPage, setPerPage] = React.useState(10);
   const [page, setPage] = React.useState(1);
   const [selectedPackages, setSelectedPackages] = React.useState<Set<string>>(new Set());
@@ -110,6 +163,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const [showAsOneStep, setShowAsOneStep] = React.useState(false);
   const [activeStep, setActiveStep] = React.useState('custom-repositories');
   const [activeTabKey, setActiveTabKey] = React.useState('included-repos');
+
 
   // Filtered data based on search
   const allFilteredPackages = React.useMemo(() => {
@@ -605,73 +659,95 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      {/* Top Control Panel */}
-              <div style={{
-          backgroundColor: '#f8f9fa',
-          borderBottom: '1px solid #d1d1d1',
-          padding: '20px',
-          zIndex: 1000
-        }}>
-
-                {/* Feature Toggle */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div 
-              style={{
-                width: '44px',
-                height: '24px',
-                backgroundColor: showAsOneStep ? '#0066cc' : '#ccc',
-                borderRadius: '12px',
-                position: 'relative',
-                cursor: 'pointer',
-                transition: 'background-color 0.2s ease'
-              }}
-              onClick={() => setShowAsOneStep(!showAsOneStep)}
-            >
-              <div style={{
-                width: '20px',
-                height: '20px',
-                backgroundColor: 'white',
-                borderRadius: '50%',
-                position: 'absolute',
-                top: '2px',
-                left: showAsOneStep ? '22px' : '2px',
-                transition: 'left 0.2s ease',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-              }} />
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000
+    }}>
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+        maxWidth: '90vw',
+        maxHeight: '90vh',
+        width: '1200px',
+        height: '800px',
+        overflow: 'auto',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'auto' }}>
+          {/* Top Control Panel */}
+          <div style={{
+            backgroundColor: '#f8f9fa',
+            borderBottom: '1px solid #d1d1d1',
+            padding: '20px',
+            zIndex: 1000
+          }}>
+            {/* Feature Toggle */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div 
+                  style={{
+                    width: '44px',
+                    height: '24px',
+                    backgroundColor: showAsOneStep ? '#0066cc' : '#ccc',
+                    borderRadius: '12px',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onClick={() => setShowAsOneStep(!showAsOneStep)}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: 'white',
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    top: '2px',
+                    left: showAsOneStep ? '22px' : '2px',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }} />
+                </div>
+                <label htmlFor="toggle-two-steps" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
+                  Combine steps
+                </label>
+              </div>
             </div>
-            <label htmlFor="toggle-two-steps" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
-              Combine steps
-            </label>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content with Sidebar */}
-      {showAsOneStep ? (
-        /* One Step View - Show all content without navigation */
-        <div style={{ flex: 1, padding: '20px' }}>
-
-          {/* Custom Repositories Step */}
-          <div style={{ marginBottom: '40px' }}>
-            <div style={{ marginBottom: '20px' }}>
-              <Title headingLevel="h2" size="lg">
-                Custom Repositories
-              </Title>
-            </div>
-            {renderCustomRepositories()}
           </div>
 
-          {/* Additional Packages Step */}
-          <div>
-            <div style={{ marginBottom: '20px' }}>
-              <Title headingLevel="h2" size="lg">
-                Additional Packages
-              </Title>
-            </div>
-            {renderAdditionalPackages()}
-          </div>
+          {/* Main Content with Sidebar */}
+          {showAsOneStep ? (
+            /* One Step View - Show all content without navigation */
+            <div style={{ flex: 1, padding: '20px' }}>
+              {/* Custom Repositories Step */}
+              <div style={{ marginBottom: '40px' }}>
+                <div style={{ marginBottom: '20px' }}>
+                  <Title headingLevel="h2" size="lg">
+                    Custom Repositories
+                  </Title>
+                </div>
+                {renderCustomRepositories()}
+              </div>
+
+              {/* Additional Packages Step */}
+              <div>
+                <div style={{ marginBottom: '20px' }}>
+                  <Title headingLevel="h2" size="lg">
+                    Additional Packages
+                  </Title>
+                </div>
+                {renderAdditionalPackages()}
+              </div>
         </div>
       ) : (
         /* Two Step View - Original wizard with sidebar navigation */
@@ -694,15 +770,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                   itemId="custom-repositories" 
                   isActive={activeStep === 'custom-repositories'}
                   icon={<RepositoryIcon />}
-                  style={{
-                    backgroundColor: activeStep === 'custom-repositories' ? '#e7f1ff' : 'transparent',
-                    border: activeStep === 'custom-repositories' ? '2px solid #0066cc' : '2px solid transparent',
-                    borderRadius: '6px',
-                    marginBottom: '8px',
-                    padding: '12px',
-                    transition: 'all 0.2s ease',
-                    cursor: 'pointer'
-                  }}
+                  className="custom-nav-item"
                 >
                   <div style={{ 
                     display: 'flex', 
@@ -724,15 +792,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                   itemId="additional-packages" 
                   isActive={activeStep === 'additional-packages'}
                   icon={<PackageIcon />}
-                  style={{
-                    backgroundColor: activeStep === 'additional-packages' ? '#e7f1ff' : 'transparent',
-                    border: activeStep === 'additional-packages' ? '2px solid #0066cc' : '2px solid transparent',
-                    borderRadius: '6px',
-                    marginBottom: '8px',
-                    padding: '12px',
-                    transition: 'all 0.2s ease',
-                    cursor: 'pointer'
-                  }}
+                  className="custom-nav-item"
                 >
                   <div style={{ 
                     display: 'flex', 
@@ -774,6 +834,8 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           </div>
         </div>
       )}
+        </div>
+      </div>
     </div>
   );
 };

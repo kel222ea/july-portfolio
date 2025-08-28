@@ -15,16 +15,5 @@ module.exports = merge(common, {
     hot: true,
     compress: true,
   },
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        include: [
-          path.resolve(__dirname, 'src'),
-          path.resolve(__dirname, 'node_modules/@patternfly'),
-        ],
-        use: ['style-loader', 'css-loader'],
-      },
-    ],
-  },
+
 });

@@ -33,6 +33,14 @@ module.exports = {
         test: /\.(jpg|jpeg|png|gif)$/i,
         type: 'asset/resource',
       },
+      {
+        test: /\.css$/,
+        include: [
+          path.resolve(__dirname, 'src'),
+          path.resolve(__dirname, 'node_modules/@patternfly'),
+        ],
+        use: ['style-loader', 'css-loader'],
+      },
     ],
   },
   output: {

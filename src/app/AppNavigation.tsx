@@ -18,34 +18,9 @@ export const AppNavigation: React.FunctionComponent = () => {
 
   const navItems = [
     {
-      itemId: 'overview',
-      title: 'Overview',
+      itemId: 'additional-packages',
+      title: 'Additional Packages',
       to: '/'
-    },
-    {
-      itemId: 'wizard-comparison',
-      title: 'Wizard vs Modal',
-      to: '/wizard-comparison'
-    },
-    {
-      itemId: 'state-management',
-      title: 'State Management',
-      to: '/state-management'
-    },
-    {
-      itemId: 'form-validation',
-      title: 'Form Validation',
-      to: '/form-validation'
-    },
-    {
-      itemId: 'status-indicators',
-      title: 'Status & Progress',
-      to: '/status-indicators'
-    },
-    {
-      itemId: 'data-tables',
-      title: 'Data Tables',
-      to: '/data-tables'
     }
   ];
 
