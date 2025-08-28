@@ -271,14 +271,25 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   // Filter repositories
   const filteredRepositories = React.useMemo(() => {
     let filtered = [...mockRepositories];
+    
+    // Apply search term filtering
+    if (searchTerm) {
+      filtered = filtered.filter(repo => 
+        repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        repo.url.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    // Apply toggle filtering
     if (reposToggleSelected === 'toggle-repos-selected') {
       filtered = filtered.filter(repo => selectedRepositories.has(repo.id));
       if (!hasViewedReposSelected) {
         setHasViewedReposSelected(true);
       }
     }
+    
     return filtered;
-  }, [reposToggleSelected, selectedRepositories, hasViewedReposSelected]);
+  }, [searchTerm, reposToggleSelected, selectedRepositories, hasViewedReposSelected]);
 
   // Event handlers
   const handleSearch = (value: string) => {
@@ -474,8 +485,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
       </div>
 
       {/* Repositories Table */}
-      {(searchTerm || reposToggleSelected === 'toggle-repos-selected') ? (
-        <Table aria-label="Custom repositories table" variant="compact">
+      <Table aria-label="Custom repositories table" variant="compact">
         <Thead>
           <Tr>
             <Th aria-label="Select repository"></Th>
@@ -523,7 +533,6 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           ))}
         </Tbody>
       </Table>
-      ) : null}
 
       {/* Pagination */}
       <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
