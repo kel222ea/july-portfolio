@@ -1,10 +1,6 @@
 import * as React from 'react';
 import {
-  PageSection,
-  PageSectionVariants,
   Title,
-  Alert,
-  AlertVariant,
   SearchInput,
   Button,
   ButtonVariant,
@@ -15,11 +11,6 @@ import {
   Nav,
   NavList,
   NavItem,
-  PageSidebar,
-  Page,
-  PageGroup,
-  Breadcrumb,
-  BreadcrumbItem,
   Checkbox,
   Tabs,
   Tab,
@@ -32,25 +23,28 @@ import {
   Tr,
   Th,
   Td,
-  ExpandableRowContent,
 } from '@patternfly/react-table';
 import { RepositoryIcon, PackageIcon } from '@patternfly/react-icons';
 
-// Mock data types based on the osbuild implementation
+// Mock data types
 interface Package {
   name: string;
   summary: string;
-  repository: 'distro' | 'custom' | 'recommended' | 'included' | 'other';
+  repository: 'included' | 'other';
   source: 'Red Hat Repository' | 'Third Party Repository';
-  type?: string;
-  module_name?: string;
-  stream?: string;
-  end_date?: string;
 }
 
+interface Repository {
+  id: string;
+  name: string;
+  url: string;
+  arch: string;
+  version: string;
+  packages: number;
+  status: string;
+}
 
-
-// Mock data for demonstration - Included repositories (core system packages)
+// Mock data for demonstration
 const includedRepoPackages: Package[] = [
   { name: 'httpd', summary: 'Apache HTTP Server', repository: 'included', source: 'Red Hat Repository' },
   { name: 'nginx', summary: 'High performance web server', repository: 'included', source: 'Third Party Repository' },
@@ -122,7 +116,6 @@ const includedRepoPackages: Package[] = [
   { name: 'zsh', summary: 'Z shell', repository: 'included', source: 'Red Hat Repository' },
 ];
 
-// Mock data for other repositories (EPEL, custom repos, etc.)
 const otherRepoPackages: Package[] = [
   { name: 'epel-release', summary: 'Extra Packages for Enterprise Linux', repository: 'other', source: 'Red Hat Repository' },
   { name: 'elasticsearch', summary: 'Distributed search and analytics engine', repository: 'other', source: 'Third Party Repository' },
@@ -152,73 +145,228 @@ const otherRepoPackages: Package[] = [
   { name: 'nexus', summary: 'Repository manager', repository: 'other', source: 'Red Hat Repository' },
   { name: 'artifactory', summary: 'Binary repository manager', repository: 'other', source: 'Third Party Repository' },
   { name: 'maven', summary: 'Build automation tool', repository: 'other', source: 'Red Hat Repository' },
-  { name: 'gradle', summary: 'Build automation system', repository: 'other', source: 'Third Party Repository' },
-  { name: 'ant', summary: 'Java build tool', repository: 'other', source: 'Red Hat Repository' },
-  { name: 'make', summary: 'Build automation utility', repository: 'other', source: 'Red Hat Repository' },
-  { name: 'cmake', summary: 'Cross-platform build system', repository: 'other', source: 'Red Hat Repository' },
+  { name: 'gradle', summary: 'Build automation tool', repository: 'other', source: 'Third Party Repository' },
+  { name: 'ant', summary: 'Build tool', repository: 'other', source: 'Red Hat Repository' },
+  { name: 'make', summary: 'Build automation tool', repository: 'other', source: 'Red Hat Repository' },
+  { name: 'cmake', summary: 'Cross-platform build system', repository: 'other', source: 'Third Party Repository' },
   { name: 'ninja', summary: 'Small build system', repository: 'other', source: 'Third Party Repository' },
-  { name: 'bazel', summary: 'Fast, scalable build system', repository: 'other', source: 'Third Party Repository' },
-  { name: 'scons', summary: 'Software construction tool', repository: 'other', source: 'Third Party Repository' },
-  { name: 'autotools', summary: 'GNU build system', repository: 'other', source: 'Red Hat Repository' },
-  { name: 'meson', summary: 'Build system generator', repository: 'other', source: 'Third Party Repository' },
+  { name: 'bazel', summary: 'Build system', repository: 'other', source: 'Third Party Repository' },
   { name: 'buck', summary: 'Build system', repository: 'other', source: 'Third Party Repository' },
-  { name: 'pants', summary: 'Build system for monorepos', repository: 'other', source: 'Third Party Repository' },
-  { name: 'please', summary: 'High-performance build system', repository: 'other', source: 'Third Party Repository' },
-  { name: 'sbt', summary: 'Scala build tool', repository: 'other', source: 'Third Party Repository' },
-  { name: 'leiningen', summary: 'Clojure project automation', repository: 'other', source: 'Third Party Repository' },
-  { name: 'cabal', summary: 'Haskell build system', repository: 'other', source: 'Third Party Repository' },
-  { name: 'stack', summary: 'Haskell development tool', repository: 'other', source: 'Third Party Repository' },
-  { name: 'pip', summary: 'Python package installer', repository: 'other', source: 'Red Hat Repository' },
-  { name: 'conda', summary: 'Package and environment manager', repository: 'other', source: 'Third Party Repository' },
-  { name: 'poetry', summary: 'Python dependency management', repository: 'other', source: 'Third Party Repository' },
-  { name: 'pipenv', summary: 'Python virtual environment manager', repository: 'other', source: 'Third Party Repository' },
-  { name: 'virtualenv', summary: 'Python virtual environment', repository: 'other', source: 'Third Party Repository' },
-  { name: 'venv', summary: 'Python virtual environment', repository: 'other', source: 'Red Hat Repository' },
-  { name: 'pyenv', summary: 'Python version manager', repository: 'other', source: 'Third Party Repository' },
-  { name: 'rvm', summary: 'Ruby version manager', repository: 'other', source: 'Third Party Repository' },
-  { name: 'rbenv', summary: 'Ruby version manager', repository: 'other', source: 'Third Party Repository' },
-  { name: 'nvm', summary: 'Node.js version manager', repository: 'other', source: 'Third Party Repository' },
-  { name: 'fnm', summary: 'Fast Node.js version manager', repository: 'other', source: 'Third Party Repository' },
-  { name: 'gvm', summary: 'Go version manager', repository: 'other', source: 'Third Party Repository' },
-  { name: 'g', summary: 'Go version manager', repository: 'other', source: 'Third Party Repository' },
-  { name: 'sdkman', summary: 'Software development kit manager', repository: 'other', source: 'Third Party Repository' },
-  { name: 'asdf', summary: 'Extendable version manager', repository: 'other', source: 'Third Party Repository' },
-  { name: 'jenv', summary: 'Java environment manager', repository: 'other', source: 'Third Party Repository' },
-  { name: 'jabba', summary: 'Java version manager', repository: 'other', source: 'Third Party Repository' },
-  { name: 'sdk', summary: 'Software development kit', repository: 'other', source: 'Red Hat Repository' },
-  { name: 'toolbox', summary: 'Development environment container', repository: 'other', source: 'Red Hat Repository' },
-  { name: 'devcontainer', summary: 'Development container', repository: 'other', source: 'Third Party Repository' },
-  { name: 'codespace', summary: 'Cloud development environment', repository: 'other', source: 'Third Party Repository' },
-  { name: 'gitpod', summary: 'Cloud development environment', repository: 'other', source: 'Third Party Repository' },
-  { name: 'replit', summary: 'Online IDE and hosting platform', repository: 'other', source: 'Third Party Repository' },
-  { name: 'glitch', summary: 'Web app creation platform', repository: 'other', source: 'Third Party Repository' },
-  { name: 'stackblitz', summary: 'Online development environment', repository: 'other', source: 'Third Party Repository' },
-  { name: 'codepen', summary: 'Front-end development playground', repository: 'other', source: 'Third Party Repository' },
-  { name: 'jsfiddle', summary: 'JavaScript code playground', repository: 'other', source: 'Third Party Repository' },
-  { name: 'plunker', summary: 'Online code editor', repository: 'other', source: 'Third Party Repository' },
-  { name: 'runkit', summary: 'Node.js playground', repository: 'other', source: 'Third Party Repository' },
-  { name: 'observable', summary: 'Interactive notebook platform', repository: 'other', source: 'Third Party Repository' },
-  { name: 'jupyter', summary: 'Interactive computing platform', repository: 'other', source: 'Red Hat Repository' },
-  { name: 'colab', summary: 'Google Colaboratory', repository: 'other', source: 'Third Party Repository' },
-  { name: 'kaggle', summary: 'Data science platform', repository: 'other', source: 'Third Party Repository' },
-  { name: 'databricks', summary: 'Data engineering platform', repository: 'other', source: 'Third Party Repository' },
-  { name: 'snowflake', summary: 'Cloud data platform', repository: 'other', source: 'Third Party Repository' },
-  { name: 'bigquery', summary: 'Google BigQuery', repository: 'other', source: 'Third Party Repository' },
-  { name: 'redshift', summary: 'Amazon Redshift', repository: 'other', source: 'Third Party Repository' },
-  { name: 'synapse', summary: 'Azure Synapse Analytics', repository: 'other', source: 'Third Party Repository' },
+  { name: 'pants', summary: 'Build system', repository: 'other', source: 'Third Party Repository' },
+  { name: 'please', summary: 'Build system', repository: 'other', source: 'Third Party Repository' },
+  { name: 'scons', summary: 'Build system', repository: 'other', source: 'Red Hat Repository' },
+  { name: 'waf', summary: 'Build system', repository: 'other', source: 'Third Party Repository' },
+  { name: 'meson', summary: 'Build system', repository: 'other', source: 'Third Party Repository' },
+  { name: 'autotools', summary: 'Build system', repository: 'other', source: 'Red Hat Repository' },
+  { name: 'conan', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'vcpkg', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'spack', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'conda', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'pip', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'gem', summary: 'Package manager', repository: 'other', source: 'Red Hat Repository' },
+  { name: 'cpan', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'cabal', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'stack', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'nuget', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'chocolatey', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'scoop', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'winget', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'homebrew', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'apt', summary: 'Package manager', repository: 'other', source: 'Red Hat Repository' },
+  { name: 'dnf', summary: 'Package manager', repository: 'other', source: 'Red Hat Repository' },
+  { name: 'zypper', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'pacman', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'xbps', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'nix', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'guix', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'flatpak', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'snap', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'appimage', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'rpm', summary: 'Package manager', repository: 'other', source: 'Red Hat Repository' },
+  { name: 'dpkg', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'pkg', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'brew', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'port', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'fink', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'macports', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'pkgsrc', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'slackpkg', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'slapt-get', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'swaret', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'netpkg', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'pkgtool', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'slackpkg', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'slapt-get', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'swaret', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'netpkg', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
+  { name: 'pkgtool', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
 ];
 
-
-
-// Mock repositories data
-const mockRepositories = [
-  { id: 'repo-1', name: 'EPEL Repository', url: 'https://dl.fedoraproject.org/pub/epel/', arch: 'x86_64', version: '8', packages: 12847, status: 'Valid' },
-  { id: 'repo-2', name: 'Custom RPM Repository', url: 'https://example.com/custom-repo/', arch: 'x86_64', version: '8', packages: 156, status: 'Valid' }
+const mockRepositories: Repository[] = [
+  { id: 'repo1', name: 'EPEL Repository', url: 'https://dl.fedoraproject.org/pub/epel/', arch: 'x86_64', version: '8', packages: 15000, status: 'Active' },
+  { id: 'repo2', name: 'RPM Fusion', url: 'https://rpmfusion.org/', arch: 'x86_64', version: '8', packages: 8000, status: 'Active' },
+  { id: 'repo3', name: 'Custom Internal', url: 'https://internal.company.com/repos/', arch: 'x86_64', version: '8', packages: 2500, status: 'Active' },
+  { id: 'repo4', name: 'Development Tools', url: 'https://dev.company.com/repos/', arch: 'x86_64', version: '8', packages: 1200, status: 'Active' },
+  { id: 'repo5', name: 'Testing Repository', url: 'https://test.company.com/repos/', arch: 'x86_64', version: '8', packages: 800, status: 'Active' },
+  { id: 'repo6', name: 'Staging Repository', url: 'https://staging.company.com/repos/', arch: 'x86_64', version: '8', packages: 600, status: 'Active' },
+  { id: 'repo7', name: 'Production Repository', url: 'https://prod.company.com/repos/', arch: 'x86_64', version: '8', packages: 400, status: 'Active' },
+  { id: 'repo8', name: 'Archive Repository', url: 'https://archive.company.com/repos/', arch: 'x86_64', version: '8', packages: 200, status: 'Active' },
 ];
 
 export const AdditionalPackages: React.FunctionComponent = () => {
+  // State for packages
   const [searchTerm, setSearchTerm] = React.useState('');
   const [toggleSelected, setToggleSelected] = React.useState<'toggle-available' | 'toggle-selected'>('toggle-available');
+  const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(10);
+  const [selectedPackages, setSelectedPackages] = React.useState<Set<string>>(new Set(['openssh', 'firewalld', 'selinux', 'rsyslog']));
+  const [activeTabKey, setActiveTabKey] = React.useState('included-repos');
+  const [hasViewedSelected, setHasViewedSelected] = React.useState(false);
+  const [hasViewedPackagesSelected, setHasViewedPackagesSelected] = React.useState(false);
+
+  // State for repositories
+  const [selectedRepositories, setSelectedRepositories] = React.useState<Set<string>>(new Set(['repo1', 'repo2']));
+  const [reposToggleSelected, setReposToggleSelected] = React.useState<'toggle-repos-all' | 'toggle-repos-selected'>('toggle-repos-all');
+  const [hasViewedReposSelected, setHasViewedReposSelected] = React.useState(false);
+
+  // State for step management
+  const [showAsOneStep, setShowAsOneStep] = React.useState(false);
+  const [activeStep, setActiveStep] = React.useState('custom-repositories');
+
+  // Computed values for packages
+  const selectedCount = selectedPackages.size;
+  const totalAvailableItems = includedRepoPackages.length + otherRepoPackages.length;
+
+  // Filter packages based on search term and active tab
+  const filteredPackages = React.useMemo(() => {
+    const sourcePackages = activeTabKey === 'included-repos' ? includedRepoPackages : otherRepoPackages;
+    let filtered = sourcePackages.filter(pkg => {
+      const nameMatch = pkg.name.toLowerCase().startsWith(searchTerm.toLowerCase());
+      return nameMatch;
+    });
+    return filtered;
+  }, [searchTerm, activeTabKey]);
+
+  // Apply toggle filtering (Available/Selected)
+  const toggleFilteredPackages = React.useMemo(() => {
+    let filtered = [...filteredPackages];
+    if (toggleSelected === 'toggle-selected') {
+      filtered = filtered.filter(pkg => selectedPackages.has(pkg.name));
+      if (!hasViewedPackagesSelected) {
+        setHasViewedPackagesSelected(true);
+      }
+    }
+    return filtered;
+  }, [filteredPackages, toggleSelected, selectedPackages, hasViewedPackagesSelected]);
+
+  // Paginate packages
+  const paginatedPackages = React.useMemo(() => {
+    const startIndex = (page - 1) * perPage;
+    return toggleFilteredPackages.slice(startIndex, startIndex + perPage);
+  }, [toggleFilteredPackages, page, perPage]);
+
+  // Total items for pagination
+  const totalItems = toggleFilteredPackages.length;
+
+  // Filter repositories
+  const filteredRepositories = React.useMemo(() => {
+    let filtered = [...mockRepositories];
+    if (reposToggleSelected === 'toggle-repos-selected') {
+      filtered = filtered.filter(repo => selectedRepositories.has(repo.id));
+      if (!hasViewedReposSelected) {
+        setHasViewedReposSelected(true);
+      }
+    }
+    return filtered;
+  }, [reposToggleSelected, selectedRepositories, hasViewedReposSelected]);
+
+  // Event handlers
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    setPage(1);
+  };
+
+  const handleClear = () => {
+    setSearchTerm('');
+    setPage(1);
+    // Note: selected packages should persist
+  };
+
+  const handleToggleChange = (event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>, selected: boolean) => {
+    // For PatternFly ToggleGroupItem, we need to handle this differently
+    // The selected state tells us which button was clicked
+    if (selected) {
+      // This means the button was selected, so we need to determine which one
+      // We'll use a different approach - create separate handlers for each button
+    }
+    setPage(1);
+  };
+
+  const handleAvailableToggle = () => {
+    setToggleSelected('toggle-available');
+    setPage(1);
+  };
+
+  const handleSelectedToggle = () => {
+    setToggleSelected('toggle-selected');
+    setPage(1);
+  };
+
+  const handlePackageSelect = (event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>, selected: boolean) => {
+    const packageName = event.currentTarget.getAttribute('data-package-name');
+    if (packageName) {
+      const newSelected = new Set(selectedPackages);
+      if (selected) {
+        newSelected.add(packageName);
+      } else {
+        newSelected.delete(packageName);
+      }
+      setSelectedPackages(newSelected);
+    }
+  };
+
+  const handleRepositorySelect = (event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>, selected: boolean) => {
+    const repoId = event.currentTarget.getAttribute('data-repo-id');
+    if (repoId) {
+      const newSelected = new Set(selectedRepositories);
+      if (selected) {
+        newSelected.add(repoId);
+      } else {
+        newSelected.delete(repoId);
+      }
+      setSelectedRepositories(newSelected);
+    }
+  };
+
+  const handleReposToggleChange = (event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>, selected: boolean) => {
+    const buttonId = event.currentTarget.getAttribute('data-button-id');
+    if (buttonId === 'toggle-repos-all') {
+      setReposToggleSelected('toggle-repos-all');
+    } else if (buttonId === 'toggle-repos-selected') {
+      setReposToggleSelected('toggle-repos-selected');
+    }
+  };
+
+  const handleReposAllToggle = () => {
+    setReposToggleSelected('toggle-repos-all');
+  };
+
+  const handleReposSelectedToggle = () => {
+    setReposToggleSelected('toggle-repos-selected');
+  };
+
+  const handleStepChange = (stepId: string) => {
+    setActiveStep(stepId);
+  };
+
+  const onSetPage = (_event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const onPerPageSelect = (_event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>, newPerPage: number) => {
+    setPerPage(newPerPage);
+    setPage(1);
+  };
 
   // Add custom CSS for navigation styling
   React.useEffect(() => {
@@ -272,192 +420,6 @@ export const AdditionalPackages: React.FunctionComponent = () => {
       document.head.removeChild(style);
     };
   }, []);
-  const [perPage, setPerPage] = React.useState(10);
-  const [page, setPage] = React.useState(1);
-  const [selectedPackages, setSelectedPackages] = React.useState<Set<string>>(new Set());
-
-
-  const [selectedRepositories, setSelectedRepositories] = React.useState<Set<string>>(new Set());
-  const [reposToggleSelected, setReposToggleSelected] = React.useState<'toggle-repos-all' | 'toggle-repos-selected'>('toggle-repos-all');
-  const [hasViewedSelected, setHasViewedSelected] = React.useState(false);
-  const [hasViewedPackagesSelected, setHasViewedPackagesSelected] = React.useState(false);
-  const [showAsOneStep, setShowAsOneStep] = React.useState(false);
-  const [activeStep, setActiveStep] = React.useState('custom-repositories');
-  const [activeTabKey, setActiveTabKey] = React.useState('included-repos');
-
-
-  // Filtered data based on search and active tab
-  const filteredPackages = React.useMemo(() => {
-    // Choose the appropriate package array based on active tab
-    const sourcePackages = activeTabKey === 'included-repos' ? includedRepoPackages : otherRepoPackages;
-    
-    let filtered = sourcePackages.filter(pkg => {
-      const nameMatch = pkg.name.toLowerCase().startsWith(searchTerm.toLowerCase());
-      return nameMatch;
-    });
-    
-    return filtered;
-  }, [searchTerm, activeTabKey]);
-
-  // Apply toggle filtering separately
-  const toggleFilteredPackages = React.useMemo(() => {
-    let filtered = [...filteredPackages];
-    
-    // Apply toggle filter
-    if (toggleSelected === 'toggle-selected') {
-      // Show only selected packages
-      filtered = filtered.filter(pkg => selectedPackages.has(pkg.name));
-    } else {
-      // "Available" toggle - hide selected packages only after user has viewed "Selected" list
-      if (hasViewedPackagesSelected) {
-        filtered = filtered.filter(pkg => !selectedPackages.has(pkg.name));
-      }
-      // If hasn't viewed "Selected" yet, show all packages
-    }
-    
-    return filtered;
-  }, [filteredPackages, toggleSelected, selectedPackages, hasViewedPackagesSelected]);
-
-
-  // Pagination
-  const startIndex = (page - 1) * perPage;
-  const endIndex = startIndex + perPage;
-  const paginatedPackages = toggleFilteredPackages.slice(startIndex, endIndex);
-
-
-  // Event handlers
-  const handleSearch = (event: React.FormEvent<HTMLInputElement>, value: string) => {
-    setSearchTerm(value);
-    setPage(1);
-  };
-
-  const handleClear = () => {
-    setSearchTerm('');
-    setPage(1);
-    // Don't clear selected packages - they should persist even after clearing search
-  };
-
-  const handleToggleChange = (event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>, selected: boolean) => {
-    const buttonId = event.currentTarget.getAttribute('id');
-    console.log('Toggle change event:', { buttonId, selected, event: event.currentTarget });
-    if (buttonId && (buttonId === 'toggle-available' || buttonId === 'toggle-selected')) {
-      console.log('Setting toggle to:', buttonId);
-      setToggleSelected(buttonId as 'toggle-available' | 'toggle-selected');
-      setPage(1); // Reset to first page when switching views
-      
-      // Track when user views the "Selected" list for packages
-      if (buttonId === 'toggle-selected') {
-        setHasViewedPackagesSelected(true);
-      }
-      
-      console.log('State update called for:', buttonId);
-    } else {
-      console.log('Button ID not found or invalid:', buttonId);
-    }
-  };
-
-  const handlePackageSelect = (event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
-    const packageName = event.currentTarget.getAttribute('data-package-name');
-    if (packageName) {
-      const newSelected = new Set(selectedPackages);
-      if (checked) {
-        newSelected.add(packageName);
-      } else {
-        newSelected.delete(packageName);
-      }
-      setSelectedPackages(newSelected);
-    }
-  };
-
-
-
-
-
-  const handleRepositorySelect = (event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
-    const repoId = event.currentTarget.getAttribute('id');
-    if (repoId) {
-      const newSelected = new Set(selectedRepositories);
-      if (checked) {
-        newSelected.add(repoId);
-      } else {
-        newSelected.delete(repoId);
-      }
-      setSelectedRepositories(newSelected);
-    }
-  };
-
-  const handleReposToggleChange = (event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>, selected: boolean) => {
-    const buttonId = event.currentTarget.getAttribute('id');
-    console.log('Repos toggle change event:', { buttonId, selected, event: event.currentTarget });
-    if (buttonId && (buttonId === 'toggle-repos-all' || buttonId === 'toggle-repos-selected')) {
-      console.log('Setting repos toggle to:', buttonId);
-      setReposToggleSelected(buttonId as 'toggle-repos-all' | 'toggle-repos-selected');
-      
-      // Track when user views the "Selected" list
-      if (buttonId === 'toggle-repos-selected') {
-        setHasViewedSelected(true);
-      }
-    } else {
-      console.log('Repos button ID not found or invalid:', buttonId);
-    }
-  };
-
-  // Use inline handlers to match PF v6 types
-  const onSetPage = (
-    _event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>,
-    newPage: number
-  ) => setPage(newPage);
-
-  const onPerPageSelect = (
-    _event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>,
-    newPerPage: number
-  ) => {
-    setPerPage(newPerPage);
-    setPage(1);
-  };
-
-  // Calculate totals based on active tab
-  const getTotalAvailableItems = () => {
-    return activeTabKey === 'included-repos' ? includedRepoPackages.length : otherRepoPackages.length;
-  };
-  
-  const totalAvailableItems = getTotalAvailableItems();
-  const totalItems = toggleFilteredPackages.length;
-  const selectedCount = selectedPackages.size;
-  
-  // Filtered repositories based on toggle state
-  const filteredRepositories = React.useMemo(() => {
-    let filtered = mockRepositories.filter(repo =>
-      repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      repo.url.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    
-    // Apply toggle filter
-    if (reposToggleSelected === 'toggle-repos-selected') {
-      // Show only selected repositories
-      filtered = filtered.filter(repo => selectedRepositories.has(repo.id));
-    } else {
-      // "All" toggle - hide selected repos only after user has viewed "Selected" list
-      if (hasViewedSelected) {
-        filtered = filtered.filter(repo => !selectedRepositories.has(repo.id));
-      }
-      // If hasn't viewed "Selected" yet, show all repos
-    }
-    
-    return filtered;
-  }, [searchTerm, reposToggleSelected, selectedRepositories, hasViewedSelected]);
-  
-  // Debug logging
-  console.log('Toggle state:', { toggleSelected, selectedCount, totalItems, totalAvailableItems });
-  console.log('Repos toggle state:', { reposToggleSelected, selectedRepositories: selectedRepositories.size });
-  console.log('Filtered data:', { 
-    packages: toggleFilteredPackages.length, 
-    selectedPackages: Array.from(selectedPackages)
-  });
-
-  const handleStepChange = (stepId: string) => {
-    setActiveStep(stepId);
-  };
 
   const renderCustomRepositories = () => (
     <div style={{ padding: '20px 0' }}>
@@ -483,7 +445,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           <SearchInput
             placeholder="Filter repositories"
             value={searchTerm}
-            onChange={handleSearch}
+            onChange={(event, value) => handleSearch(value)}
             onClear={handleClear}
             aria-label="Filter repositories"
           />
@@ -495,24 +457,25 @@ export const AdditionalPackages: React.FunctionComponent = () => {
 
         <ToggleGroup aria-label="Filter repositories list">
           <ToggleGroupItem
-            text={`All${mockRepositories ? ` (${hasViewedSelected ? mockRepositories.length - selectedRepositories.size : mockRepositories.length})` : ''}`}
+            text={`All${mockRepositories ? ` (${hasViewedReposSelected ? mockRepositories.length - selectedRepositories.size : mockRepositories.length})` : ''}`}
             aria-label="All repositories"
             buttonId="toggle-repos-all"
             isSelected={reposToggleSelected === 'toggle-repos-all'}
-            onChange={handleReposToggleChange}
+            onChange={() => handleReposAllToggle()}
           />
           <ToggleGroupItem
             text={`Selected${selectedRepositories.size ? ` (${selectedRepositories.size})` : ''}`}
             aria-label="Selected repositories"
             buttonId="toggle-repos-selected"
             isSelected={reposToggleSelected === 'toggle-repos-selected'}
-            onChange={handleReposToggleChange}
+            onChange={() => handleReposSelectedToggle()}
           />
         </ToggleGroup>
       </div>
 
       {/* Repositories Table */}
-      <Table aria-label="Custom repositories table" variant="compact">
+      {(searchTerm || reposToggleSelected === 'toggle-repos-selected') ? (
+        <Table aria-label="Custom repositories table" variant="compact">
         <Thead>
           <Tr>
             <Th aria-label="Select repository"></Th>
@@ -523,42 +486,44 @@ export const AdditionalPackages: React.FunctionComponent = () => {
             <Th>Status</Th>
           </Tr>
         </Thead>
-                    <Tbody>
-              {filteredRepositories.map((repo) => (
-                <Tr key={repo.id}>
-                  <Td>
-                    <Checkbox
-                      id={repo.id}
-                      isChecked={selectedRepositories.has(repo.id)}
-                      onChange={handleRepositorySelect}
-                      aria-label="Select repository"
-                    />
-                  </Td>
-                  <Td>
-                    <div>
-                      <strong>{repo.name}</strong>
-                      <br />
-                      <Button
-                        component="a"
-                        target="_blank"
-                        variant="link"
-                        isInline
-                        href={repo.url}
-                      >
-                        {repo.url}
-                      </Button>
-                    </div>
-                  </Td>
-                  <Td>{repo.arch}</Td>
-                  <Td>{repo.version}</Td>
-                  <Td>{repo.packages.toLocaleString()}</Td>
-                  <Td>
-                    <span style={{ color: 'green' }}>{repo.status}</span>
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
+        <Tbody>
+          {filteredRepositories.map((repo) => (
+            <Tr key={repo.id}>
+              <Td>
+                <Checkbox
+                  id={repo.id}
+                  isChecked={selectedRepositories.has(repo.id)}
+                  onChange={(event, checked) => handleRepositorySelect(event, checked)}
+                  aria-label="Select repository"
+                  data-repo-id={repo.id}
+                />
+              </Td>
+              <Td>
+                <div>
+                  <strong>{repo.name}</strong>
+                  <br />
+                  <Button
+                    component="a"
+                    target="_blank"
+                    variant="link"
+                    isInline
+                    href={repo.url}
+                  >
+                    {repo.url}
+                  </Button>
+                </div>
+              </Td>
+              <Td>{repo.arch}</Td>
+              <Td>{repo.version}</Td>
+              <Td>{repo.packages.toLocaleString()}</Td>
+              <Td>
+                <span style={{ color: 'green' }}>{repo.status}</span>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
       </Table>
+      ) : null}
 
       {/* Pagination */}
       <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
@@ -595,7 +560,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
             <SearchInput
               placeholder="Search packages"
               value={searchTerm}
-              onChange={handleSearch}
+              onChange={(event, value) => handleSearch(value)}
               onClear={handleClear}
               aria-label="Search packages"
             />
@@ -606,13 +571,13 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               text={`Available${searchTerm && filteredPackages.length > 0 ? (hasViewedPackagesSelected ? ` (${Math.max(0, filteredPackages.length - selectedCount)})` : ` (${filteredPackages.length})`) : ''}`}
               buttonId="toggle-available"
               isSelected={toggleSelected === 'toggle-available'}
-              onChange={handleToggleChange}
+              onChange={() => handleAvailableToggle()}
             />
             <ToggleGroupItem
               text={`Selected${selectedCount ? ` (${selectedCount})` : ''}`}
               buttonId="toggle-selected"
               isSelected={toggleSelected === 'toggle-selected'}
-              onChange={handleToggleChange}
+              onChange={() => handleSelectedToggle()}
             />
           </ToggleGroup>
 
@@ -658,53 +623,43 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 <Th aria-label="Select item"></Th>
                 <Th>Name</Th>
                 <Th>Source</Th>
-                <Th>Application stream</Th>
-                <Th>Retirement date</Th>
+                <Th>Summary</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {/* Individual Packages */}
               {paginatedPackages.map((pkg) => (
                 <Tr key={pkg.name}>
                   <Td>
                     <Checkbox
                       id={`package-${pkg.name}`}
                       isChecked={selectedPackages.has(pkg.name)}
-                      onChange={(event: React.FormEvent<HTMLInputElement>, checked: boolean) => handlePackageSelect(event, checked)}
+                      onChange={(event, checked) => handlePackageSelect(event, checked)}
                       aria-label={`Select package ${pkg.name}`}
                       data-package-name={pkg.name}
                     />
                   </Td>
-                  <Td>
-                    <span style={{ fontWeight: 'bold' }}>{pkg.name}</span>
-                  </Td>
+                  <Td>{pkg.name}</Td>
                   <Td>{pkg.source}</Td>
-                  <Td>{pkg.stream || 'N/A'}</Td>
-                  <Td>{pkg.end_date || 'N/A'}</Td>
+                  <Td>{pkg.summary}</Td>
                 </Tr>
               ))}
             </Tbody>
           </Table>
-        ) : (
-          <div style={{ 
-            textAlign: 'center', 
-            padding: '40px', 
-            color: '#666',
-            fontStyle: 'italic'
-          }}>
-            Start typing in the search box to see packages
+        ) : null}
+
+        {/* Pagination */}
+        {totalItems > perPage && (
+          <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+            <Pagination
+              itemCount={totalItems}
+              perPage={perPage}
+              page={page}
+              onSetPage={onSetPage}
+              onPerPageSelect={onPerPageSelect}
+              variant={PaginationVariant.bottom}
+            />
           </div>
         )}
-
-        {/* Bottom Pagination */}
-        <Pagination
-          itemCount={totalItems}
-          perPage={perPage}
-          page={page}
-          onSetPage={onSetPage}
-          onPerPageSelect={onPerPageSelect}
-          variant={PaginationVariant.bottom}
-        />
       </div>
     );
   };
@@ -734,13 +689,14 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         display: 'flex',
         flexDirection: 'column'
       }}>
-        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
           {/* Top Control Panel */}
           <div style={{
             backgroundColor: '#f8f9fa',
             borderBottom: '1px solid #d1d1d1',
             padding: '20px',
-            zIndex: 1000
+            zIndex: 1000,
+            flexShrink: 0
           }}>
             {/* Feature Toggle */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
@@ -777,7 +733,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           </div>
 
           {/* Main Content with Sidebar */}
-          <div style={{ display: 'flex', flex: 1 }}>
+          <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
             {/* Left Sidebar Navigation */}
             <div style={{ 
               width: '250px', 
@@ -821,7 +777,6 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       <NavItem 
                         itemId="custom-repositories" 
                         isActive={activeStep === 'custom-repositories'}
-                        icon={<RepositoryIcon />}
                         className="custom-nav-item"
                       >
                         <div style={{ 
@@ -843,7 +798,6 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       <NavItem 
                         itemId="additional-packages" 
                         isActive={activeStep === 'additional-packages'}
-                        icon={<PackageIcon />}
                         className="custom-nav-item"
                       >
                         <div style={{ 
@@ -868,43 +822,51 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               </Nav>
             </div>
 
-          {/* Main Content Area */}
-          <div style={{ flex: 1, padding: '20px' }}>
-            {showAsOneStep ? (
-              /* Combined View - Show all content */
-              <>
-                {/* Custom Repositories Step */}
-                <div style={{ marginBottom: '40px' }}>
-                  {renderCustomRepositories()}
-                </div>
+            {/* Main Content Area */}
+            <div style={{ 
+              flex: 1, 
+              padding: '20px',
+              overflowY: 'auto',
+              overflowX: 'hidden'
+            }}>
+              {showAsOneStep ? (
+                /* Combined View - Show all content */
+                <>
+                  {/* Custom Repositories Step */}
+                  <div style={{ marginBottom: '40px' }}>
+                    {renderCustomRepositories()}
+                  </div>
 
-                {/* Additional Packages Step */}
-                <div>
-                  {renderAdditionalPackages()}
-                </div>
-              </>
-            ) : (
-              /* Two Step View - Show content based on active step */
-              <>
-                {/* Custom Repositories Step */}
-                <div style={{ 
-                  marginBottom: '40px',
-                  display: activeStep === 'custom-repositories' ? 'block' : 'none'
-                }}>
-                  {renderCustomRepositories()}
-                </div>
+                  {/* Additional Packages Step */}
+                  <div>
+                    {renderAdditionalPackages()}
+                  </div>
+                </>
+              ) : (
+                /* Two Step View - Show content based on active step */
+                <>
+                  {/* Custom Repositories Step */}
+                  <div style={{ 
+                    marginBottom: '40px',
+                    display: activeStep === 'custom-repositories' ? 'block' : 'none'
+                  }}>
+                    {renderCustomRepositories()}
+                  </div>
 
-                {/* Additional Packages Step */}
-                <div style={{
-                  display: activeStep === 'additional-packages' ? 'block' : 'none'
-                }}>
-                  {renderAdditionalPackages()}
-                </div>
-              </>
-            )}
+                  {/* Additional Packages Step */}
+                  <div style={{
+                    display: activeStep === 'additional-packages' ? 'block' : 'none'
+                  }}>
+                    {renderAdditionalPackages()}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+export default AdditionalPackages;
