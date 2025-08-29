@@ -866,7 +866,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 /* Combined View - Show all content */
                 <>
                   {/* Custom Repositories Step */}
-                  <div style={{ marginBottom: '40px' }}>
+                  <div style={{ marginBottom: '20px' }}>
                     {renderCustomRepositories()}
                   </div>
 
