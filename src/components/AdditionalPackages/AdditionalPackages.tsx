@@ -208,11 +208,6 @@ const mockRepositories: Repository[] = [
   { id: 'repo1', name: 'EPEL Repository', url: 'https://dl.fedoraproject.org/pub/epel/', arch: 'x86_64', version: '8', packages: 15000, status: 'Active' },
   { id: 'repo2', name: 'RPM Fusion', url: 'https://rpmfusion.org/', arch: 'x86_64', version: '8', packages: 8000, status: 'Active' },
   { id: 'repo3', name: 'Custom Internal', url: 'https://internal.company.com/repos/', arch: 'x86_64', version: '8', packages: 2500, status: 'Active' },
-  { id: 'repo4', name: 'Development Tools', url: 'https://dev.company.com/repos/', arch: 'x86_64', version: '8', packages: 1200, status: 'Active' },
-  { id: 'repo5', name: 'Testing Repository', url: 'https://test.company.com/repos/', arch: 'x86_64', version: '8', packages: 800, status: 'Active' },
-  { id: 'repo6', name: 'Staging Repository', url: 'https://staging.company.com/repos/', arch: 'x86_64', version: '8', packages: 600, status: 'Active' },
-  { id: 'repo7', name: 'Production Repository', url: 'https://prod.company.com/repos/', arch: 'x86_64', version: '8', packages: 400, status: 'Active' },
-  { id: 'repo8', name: 'Archive Repository', url: 'https://archive.company.com/repos/', arch: 'x86_64', version: '8', packages: 200, status: 'Active' },
 ];
 
 export const AdditionalPackages: React.FunctionComponent = () => {
@@ -939,7 +934,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 alignItems: 'center'
               }}>
                 <div style={{ fontSize: '12px', fontWeight: '600', color: '#666', marginBottom: '8px', width: '100%' }}>
-                  Interaction Controls
+                  Selection Handling
                 </div>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
