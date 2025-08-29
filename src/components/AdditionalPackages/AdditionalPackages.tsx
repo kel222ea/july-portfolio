@@ -236,6 +236,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const [activeStep, setActiveStep] = React.useState('custom-repositories');
   const [enableToggles, setEnableToggles] = React.useState(true);
   const [enableCheckboxes, setEnableCheckboxes] = React.useState(true);
+  const [searchInDropdown, setSearchInDropdown] = React.useState(false);
 
   // Computed values for packages
   const selectedCount = selectedPackages.size;
@@ -395,6 +396,20 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     setSelectedPackages(newSelected);
   };
 
+  const handleAddRepository = (repo: Repository) => {
+    // Add repository to selected set
+    const newSelected = new Set(selectedRepositories);
+    newSelected.add(repo.id);
+    setSelectedRepositories(newSelected);
+  };
+
+  const handleAddPackage = (pkg: Package) => {
+    // Add package to selected set
+    const newSelected = new Set(selectedPackages);
+    newSelected.add(pkg.name);
+    setSelectedPackages(newSelected);
+  };
+
   const handleStepChange = (stepId: string) => {
     setActiveStep(stepId);
   };
@@ -481,7 +496,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         flexWrap: 'wrap',
         padding: '16px'
       }}>
-        <div style={{ width: '300px' }}>
+        <div style={{ width: '300px', position: 'relative' }}>
           <SearchInput
             placeholder="Filter repositories"
             value={searchTerm}
@@ -489,6 +504,45 @@ export const AdditionalPackages: React.FunctionComponent = () => {
             onClear={handleClear}
             aria-label="Filter repositories"
           />
+          {searchInDropdown && searchTerm && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              backgroundColor: 'white',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              maxHeight: '200px',
+              overflowY: 'auto',
+              zIndex: 1000
+            }}>
+              {filteredRepositories.slice(0, 5).map((repo) => (
+                <div
+                  key={repo.id}
+                  onClick={() => handleAddRepository(repo)}
+                  style={{
+                    padding: '8px 12px',
+                    cursor: 'pointer',
+                    borderBottom: '1px solid #f0f0f0',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                >
+                  <div>
+                    <strong>{repo.name}</strong>
+                    <br />
+                    <small style={{ color: '#666' }}>{repo.url}</small>
+                  </div>
+                  <span style={{ color: '#0066cc', fontSize: '12px' }}>+ Add</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         
         <Button variant={ButtonVariant.primary}>
@@ -632,7 +686,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
 
         {/* Search and Controls */}
         <div style={{ margin: '20px 0', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ width: '300px' }}>
+          <div style={{ width: '300px', position: 'relative' }}>
             <SearchInput
               placeholder="Search packages"
               value={searchTerm}
@@ -640,6 +694,45 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               onClear={handleClear}
               aria-label="Search packages"
             />
+            {searchInDropdown && searchTerm && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                right: 0,
+                backgroundColor: 'white',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                maxHeight: '200px',
+                overflowY: 'auto',
+                zIndex: 1000
+              }}>
+                {filteredPackages.slice(0, 5).map((pkg) => (
+                  <div
+                    key={pkg.name}
+                    onClick={() => handleAddPackage(pkg)}
+                    style={{
+                      padding: '8px 12px',
+                      cursor: 'pointer',
+                      borderBottom: '1px solid #f0f0f0',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                  >
+                    <div>
+                      <strong>{pkg.name}</strong>
+                      <br />
+                      <small style={{ color: '#666' }}>{pkg.summary}</small>
+                    </div>
+                    <span style={{ color: '#0066cc', fontSize: '12px' }}>+ Add</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
           
 
@@ -890,6 +983,36 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 </div>
                 <label htmlFor="toggle-checkboxes" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
                   Checkbox Adders
+                </label>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '24px',
+                    backgroundColor: searchInDropdown ? '#0066cc' : '#ccc',
+                    borderRadius: '12px',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onClick={() => setSearchInDropdown(!searchInDropdown)}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: 'white',
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    top: '2px',
+                    left: searchInDropdown ? '22px' : '2px',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }} />
+                </div>
+                <label htmlFor="toggle-dropdown" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
+                  Search in Dropdown
                 </label>
               </div>
             </div>
