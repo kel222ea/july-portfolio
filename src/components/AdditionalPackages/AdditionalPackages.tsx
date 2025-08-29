@@ -560,6 +560,51 @@ export const AdditionalPackages: React.FunctionComponent = () => {
             Blueprints created with Images include all required packages.
           </p>
         </div>
+
+        {/* Demo Banner - Package Selection Instructions */}
+        <div style={{ 
+          marginBottom: '20px',
+          padding: '16px',
+          backgroundColor: '#f0f8ff',
+          border: '1px solid #0066cc',
+          borderRadius: '6px',
+          borderLeft: '4px solid #0066cc'
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '12px',
+            marginBottom: '8px'
+          }}>
+            <div style={{ 
+              width: '20px', 
+              height: '20px', 
+              backgroundColor: '#0066cc', 
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '12px',
+              fontWeight: 'bold'
+            }}>
+              i
+            </div>
+            <strong style={{ color: '#0066cc', fontSize: '14px' }}>
+              How to add packages to your image
+            </strong>
+          </div>
+          <p style={{ 
+            margin: '0', 
+            fontSize: '14px', 
+            color: '#333',
+            lineHeight: '1.4'
+          }}>
+            Use the search box above to find packages by name. Select packages by checking the boxes in the table below. 
+            You can toggle between "Available" (search results) and "Selected" (your chosen packages) views. 
+            Packages are organized by repository source - choose from included repositories or add custom ones.
+          </p>
+        </div>
       
 
 
