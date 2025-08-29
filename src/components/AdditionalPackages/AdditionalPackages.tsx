@@ -784,59 +784,83 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         </div>
 
         {/* Packages Display using Table */}
-        {(searchTerm || toggleSelected === 'toggle-selected') ? (
-          <Table aria-label="Packages table" variant="compact">
-            <Thead>
-              <Tr>
-                {enableCheckboxes && (
-                  <Th aria-label="Select item"></Th>
-                )}
-                <Th>Name</Th>
-                <Th>Source</Th>
-                <Th>Summary</Th>
-                {!enableCheckboxes && (
-                  <Th width={10}>Actions</Th>
-                )}
-              </Tr>
-            </Thead>
-                          <Tbody>
-                                 {paginatedPackages.map((pkg) => (
-                   <Tr key={pkg.name}>
-                     {enableCheckboxes && (
-                       <Td>
-                         <Checkbox
-                           id={`package-${pkg.name}`}
-                           isChecked={selectedPackages.has(pkg.name)}
-                           onChange={(event, checked) => handlePackageSelect(event, checked)}
-                           aria-label={`Select package ${pkg.name}`}
-                           data-package-name={pkg.name}
-                         />
-                       </Td>
-                     )}
-                     <Td>{pkg.name}</Td>
-                     <Td>{pkg.source}</Td>
-                     <Td>{pkg.summary}</Td>
-                     {!enableCheckboxes && (
-                       <Td>
-                         <Button
-                           variant="plain"
-                           aria-label="Remove package"
-                           onClick={() => handleRemovePackage(pkg.name)}
-                           style={{ 
-                             padding: '4px', 
-                             minWidth: 'auto',
-                             color: '#666'
-                           }}
-                         >
-                           <MinusCircleIcon style={{ color: '#000' }} />
-                         </Button>
-                       </Td>
-                     )}
-                   </Tr>
-                 ))}
-            </Tbody>
-          </Table>
-        ) : null}
+        <div style={{ 
+          minHeight: showAsOneStep ? '400px' : 'auto',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          {(searchTerm || toggleSelected === 'toggle-selected') ? (
+            <Table aria-label="Packages table" variant="compact">
+              <Thead>
+                <Tr>
+                  {enableCheckboxes && (
+                    <Th aria-label="Select item"></Th>
+                  )}
+                  <Th>Name</Th>
+                  <Th>Source</Th>
+                  <Th>Summary</Th>
+                  {!enableCheckboxes && (
+                    <Th width={10}>Actions</Th>
+                  )}
+                </Tr>
+              </Thead>
+              <Tbody>
+                {paginatedPackages.map((pkg) => (
+                  <Tr key={pkg.name}>
+                    {enableCheckboxes && (
+                      <Td>
+                        <Checkbox
+                          id={`package-${pkg.name}`}
+                          isChecked={selectedPackages.has(pkg.name)}
+                          onChange={(event, checked) => handlePackageSelect(event, checked)}
+                          aria-label={`Select package ${pkg.name}`}
+                          data-package-name={pkg.name}
+                        />
+                      </Td>
+                    )}
+                    <Td>{pkg.name}</Td>
+                    <Td>{pkg.source}</Td>
+                    <Td>{pkg.summary}</Td>
+                    {!enableCheckboxes && (
+                      <Td>
+                        <Button
+                          variant="plain"
+                          aria-label="Remove package"
+                          onClick={() => handleRemovePackage(pkg.name)}
+                          style={{ 
+                            padding: '4px', 
+                            minWidth: 'auto',
+                            color: '#666'
+                          }}
+                        >
+                          <MinusCircleIcon style={{ color: '#000' }} />
+                        </Button>
+                      </Td>
+                    )}
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          ) : (
+            /* Empty state placeholder to preserve height */
+            <div style={{ 
+              height: showAsOneStep ? '300px' : 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#666',
+              fontSize: '14px',
+              border: '1px dashed #ccc',
+              borderRadius: '4px',
+              backgroundColor: '#f8f9fa'
+            }}>
+              {(toggleSelected as string) === 'toggle-selected' 
+                ? 'No packages selected. Use the search above to find and select packages.'
+                : 'Search for packages to see results here.'
+              }
+            </div>
+          )}
+        </div>
 
         {/* Pagination */}
         {totalItems > perPage && (
