@@ -234,6 +234,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   // State for step management
   const [showAsOneStep, setShowAsOneStep] = React.useState(false);
   const [activeStep, setActiveStep] = React.useState('custom-repositories');
+  const [enableToggles, setEnableToggles] = React.useState(true);
 
   // Computed values for packages
   const selectedCount = selectedPackages.size;
@@ -479,19 +480,9 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           Refresh
         </Button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Checkbox
-            id="all-selected-toggles-repos"
-            isChecked={reposToggleSelected === 'toggle-repos-selected'}
-            onChange={(event, checked) => checked ? handleReposSelectedToggle() : handleReposAllToggle()}
-            aria-label="All/Selected Toggles"
-          />
-          <label htmlFor="all-selected-toggles-repos" style={{ fontSize: '14px', cursor: 'pointer' }}>
-            All/Selected Toggles
-          </label>
-        </div>
 
-        <ToggleGroup aria-label="Filter repositories list">
+
+        <ToggleGroup aria-label="Filter repositories list" disabled={!enableToggles}>
           <ToggleGroupItem
             text={`All${mockRepositories ? ` (${hasViewedReposSelected ? mockRepositories.length - selectedRepositories.size : mockRepositories.length})` : ''}`}
             aria-label="All repositories"
@@ -611,19 +602,9 @@ export const AdditionalPackages: React.FunctionComponent = () => {
             />
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Checkbox
-              id="all-selected-toggles-packages"
-              isChecked={toggleSelected === 'toggle-selected'}
-              onChange={(event, checked) => checked ? handleSelectedToggle() : handleAvailableToggle()}
-              aria-label="All/Selected Toggles"
-            />
-            <label htmlFor="all-selected-toggles-packages" style={{ fontSize: '14px', cursor: 'pointer' }}>
-              All/Selected Toggles
-            </label>
-          </div>
+
           
-          <ToggleGroup>
+          <ToggleGroup disabled={!enableToggles}>
             <ToggleGroupItem
               text={`Available${searchTerm && filteredPackages.length > 0 ? (hasViewedPackagesSelected ? ` (${Math.max(0, filteredPackages.length - selectedCount)})` : ` (${filteredPackages.length})`) : ''}`}
               buttonId="toggle-available"
@@ -755,7 +736,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
             zIndex: 1000,
             flexShrink: 0
           }}>
-            {/* Feature Toggle */}
+            {/* Feature Toggles */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div 
@@ -784,6 +765,36 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 </div>
                 <label htmlFor="toggle-two-steps" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
                   Combine steps
+                </label>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div 
+                  style={{
+                    width: '44px',
+                    height: '24px',
+                    backgroundColor: enableToggles ? '#0066cc' : '#ccc',
+                    borderRadius: '12px',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onClick={() => setEnableToggles(!enableToggles)}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: 'white',
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    top: '2px',
+                    left: enableToggles ? '22px' : '2px',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }} />
+                </div>
+                <label htmlFor="toggle-toggles" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
+                  Enable toggles
                 </label>
               </div>
             </div>
