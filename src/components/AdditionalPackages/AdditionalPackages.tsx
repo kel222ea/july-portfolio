@@ -368,6 +368,17 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     setReposToggleSelected('toggle-repos-selected');
   };
 
+  const handleSelectAllRepositories = (checked: boolean) => {
+    if (checked) {
+      // Select all filtered repositories
+      const allRepoIds = filteredRepositories.map(repo => repo.id);
+      setSelectedRepositories(new Set(allRepoIds));
+    } else {
+      // Deselect all repositories
+      setSelectedRepositories(new Set());
+    }
+  };
+
   const handleStepChange = (stepId: string) => {
     setActiveStep(stepId);
   };
@@ -490,7 +501,14 @@ export const AdditionalPackages: React.FunctionComponent = () => {
       <Table aria-label="Custom repositories table" variant="compact">
         <Thead>
           <Tr>
-            <Th aria-label="Select repository"></Th>
+            <Th>
+              <Checkbox
+                id="select-all-repos"
+                isChecked={selectedRepositories.size === filteredRepositories.length && filteredRepositories.length > 0}
+                onChange={(event, checked) => handleSelectAllRepositories(checked)}
+                aria-label="Select all repositories"
+              />
+            </Th>
             <Th width={45}>Name</Th>
             <Th width={15}>Architecture</Th>
             <Th>Version</Th>
