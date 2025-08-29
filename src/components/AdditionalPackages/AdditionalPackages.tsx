@@ -521,52 +521,40 @@ export const AdditionalPackages: React.FunctionComponent = () => {
       <Table aria-label="Custom repositories table" variant="compact">
         <Thead>
           <Tr>
-            <Th>
-              {enableCheckboxes ? (
+            {enableCheckboxes && (
+              <Th>
                 <Checkbox
                   id="select-all-repos"
                   isChecked={selectedRepositories.size === filteredRepositories.length && filteredRepositories.length > 0}
                   onChange={(event, checked) => handleSelectAllRepositories(checked)}
                   aria-label="Select all repositories"
                 />
-              ) : (
-                <span style={{ fontSize: '12px', color: '#666' }}>Actions</span>
-              )}
-            </Th>
+              </Th>
+            )}
             <Th width={45}>Name</Th>
             <Th width={15}>Architecture</Th>
             <Th>Version</Th>
             <Th width={10}>Packages</Th>
             <Th>Status</Th>
+            {!enableCheckboxes && (
+              <Th width={10}>Actions</Th>
+            )}
           </Tr>
         </Thead>
-                    <Tbody>
-              {filteredRepositories.map((repo) => (
-                <Tr key={repo.id}>
-                  <Td>
-                    {enableCheckboxes ? (
-                      <Checkbox
-                        id={repo.id}
-                        isChecked={selectedRepositories.has(repo.id)}
-                        onChange={(event, checked) => handleRepositorySelect(event, checked)}
-                        aria-label="Select repository"
-                        data-repo-id={repo.id}
-                      />
-                    ) : (
-                      <Button
-                        variant="plain"
-                        aria-label="Remove repository"
-                        onClick={() => handleRemoveRepository(repo.id)}
-                        style={{ 
-                          padding: '4px', 
-                          minWidth: 'auto',
-                          color: '#666'
-                        }}
-                      >
-                        <span style={{ fontSize: '16px', fontWeight: 'bold' }}>−</span>
-                      </Button>
-                    )}
-                  </Td>
+        <Tbody>
+          {filteredRepositories.map((repo) => (
+            <Tr key={repo.id}>
+              {enableCheckboxes && (
+                <Td>
+                  <Checkbox
+                    id={repo.id}
+                    isChecked={selectedRepositories.has(repo.id)}
+                    onChange={(event, checked) => handleRepositorySelect(event, checked)}
+                    aria-label="Select repository"
+                    data-repo-id={repo.id}
+                  />
+                </Td>
+              )}
               <Td>
                 <div>
                   <strong>{repo.name}</strong>
@@ -579,7 +567,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                     href={repo.url}
                   >
                     {repo.url}
-                  </Button>
+                </Button>
                 </div>
               </Td>
               <Td>{repo.arch}</Td>
@@ -588,6 +576,27 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               <Td>
                 <span style={{ color: 'green' }}>{repo.status}</span>
               </Td>
+              {!enableCheckboxes && (
+                <Td>
+                  <Button
+                    variant="plain"
+                    aria-label="Remove repository"
+                    onClick={() => handleRemoveRepository(repo.id)}
+                    style={{ 
+                      padding: '4px', 
+                      minWidth: 'auto',
+                      color: '#666'
+                    }}
+                  >
+                                               <span style={{ 
+                             fontSize: '18px', 
+                             fontWeight: 'bold',
+                             color: '#666',
+                             lineHeight: '1'
+                           }}>−</span>
+                  </Button>
+                </Td>
+              )}
             </Tr>
           ))}
         </Tbody>
@@ -696,48 +705,57 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           <Table aria-label="Packages table" variant="compact">
             <Thead>
               <Tr>
-                <Th aria-label="Select item">
-                  {enableCheckboxes ? null : (
-                    <span style={{ fontSize: '12px', color: '#666' }}>Actions</span>
-                  )}
-                </Th>
+                {enableCheckboxes && (
+                  <Th aria-label="Select item"></Th>
+                )}
                 <Th>Name</Th>
                 <Th>Source</Th>
                 <Th>Summary</Th>
+                {!enableCheckboxes && (
+                  <Th width={10}>Actions</Th>
+                )}
               </Tr>
             </Thead>
                           <Tbody>
-                {paginatedPackages.map((pkg) => (
-                  <Tr key={pkg.name}>
-                    <Td>
-                      {enableCheckboxes ? (
-                        <Checkbox
-                          id={`package-${pkg.name}`}
-                          isChecked={selectedPackages.has(pkg.name)}
-                          onChange={(event, checked) => handlePackageSelect(event, checked)}
-                          aria-label={`Select package ${pkg.name}`}
-                          data-package-name={pkg.name}
-                        />
-                      ) : (
-                        <Button
-                          variant="plain"
-                          aria-label="Remove package"
-                          onClick={() => handleRemovePackage(pkg.name)}
-                          style={{ 
-                            padding: '4px', 
-                            minWidth: 'auto',
-                            color: '#666'
-                          }}
-                        >
-                          <span style={{ fontSize: '16px', fontWeight: 'bold' }}>−</span>
-                        </Button>
-                      )}
-                    </Td>
-                  <Td>{pkg.name}</Td>
-                  <Td>{pkg.source}</Td>
-                  <Td>{pkg.summary}</Td>
-                </Tr>
-              ))}
+                                 {paginatedPackages.map((pkg) => (
+                   <Tr key={pkg.name}>
+                     {enableCheckboxes && (
+                       <Td>
+                         <Checkbox
+                           id={`package-${pkg.name}`}
+                           isChecked={selectedPackages.has(pkg.name)}
+                           onChange={(event, checked) => handlePackageSelect(event, checked)}
+                           aria-label={`Select package ${pkg.name}`}
+                           data-package-name={pkg.name}
+                         />
+                       </Td>
+                     )}
+                     <Td>{pkg.name}</Td>
+                     <Td>{pkg.source}</Td>
+                     <Td>{pkg.summary}</Td>
+                     {!enableCheckboxes && (
+                       <Td>
+                         <Button
+                           variant="plain"
+                           aria-label="Remove package"
+                           onClick={() => handleRemovePackage(pkg.name)}
+                           style={{ 
+                             padding: '4px', 
+                             minWidth: 'auto',
+                             color: '#666'
+                           }}
+                         >
+                           <span style={{ 
+                          fontSize: '18px', 
+                          fontWeight: 'bold',
+                          color: '#666',
+                          lineHeight: '1'
+                        }}>−</span>
+                         </Button>
+                       </Td>
+                     )}
+                   </Tr>
+                 ))}
             </Tbody>
           </Table>
         ) : null}
