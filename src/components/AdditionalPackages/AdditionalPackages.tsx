@@ -479,6 +479,18 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           Refresh
         </Button>
 
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Checkbox
+            id="all-selected-toggles-repos"
+            isChecked={reposToggleSelected === 'toggle-repos-selected'}
+            onChange={(event, checked) => checked ? handleReposSelectedToggle() : handleReposAllToggle()}
+            aria-label="All/Selected Toggles"
+          />
+          <label htmlFor="all-selected-toggles-repos" style={{ fontSize: '14px', cursor: 'pointer' }}>
+            All/Selected Toggles
+          </label>
+        </div>
+
         <ToggleGroup aria-label="Filter repositories list">
           <ToggleGroupItem
             text={`All${mockRepositories ? ` (${hasViewedReposSelected ? mockRepositories.length - selectedRepositories.size : mockRepositories.length})` : ''}`}
@@ -597,6 +609,18 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               onClear={handleClear}
               aria-label="Search packages"
             />
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Checkbox
+              id="all-selected-toggles-packages"
+              isChecked={toggleSelected === 'toggle-selected'}
+              onChange={(event, checked) => checked ? handleSelectedToggle() : handleAvailableToggle()}
+              aria-label="All/Selected Toggles"
+            />
+            <label htmlFor="all-selected-toggles-packages" style={{ fontSize: '14px', cursor: 'pointer' }}>
+              All/Selected Toggles
+            </label>
           </div>
           
           <ToggleGroup>
