@@ -894,8 +894,9 @@ export const AdditionalPackages: React.FunctionComponent = () => {
             zIndex: 1000,
             flexShrink: 0
           }}>
-            {/* Feature Toggles */}
+                        {/* Feature Toggles */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+              {/* Layout Control */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div 
                   style={{
@@ -926,94 +927,110 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 </label>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div 
-                  style={{
-                    width: '44px',
-                    height: '24px',
-                    backgroundColor: enableToggles ? '#0066cc' : '#ccc',
-                    borderRadius: '12px',
-                    position: 'relative',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.2s ease'
-                  }}
-                  onClick={() => setEnableToggles(!enableToggles)}
-                >
-                  <div style={{
-                    width: '20px',
-                    height: '20px',
-                    backgroundColor: 'white',
-                    borderRadius: '50%',
-                    position: 'absolute',
-                    top: '2px',
-                    left: enableToggles ? '22px' : '2px',
-                    transition: 'left 0.2s ease',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                  }} />
+              {/* Interaction Controls Group */}
+              <div style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '16px',
+                padding: '16px',
+                backgroundColor: '#f8f9fa',
+                border: '1px solid #d1d1d1',
+                borderRadius: '8px',
+                alignItems: 'center'
+              }}>
+                <div style={{ fontSize: '12px', fontWeight: '600', color: '#666', marginBottom: '8px', width: '100%' }}>
+                  Interaction Controls
                 </div>
-                <label htmlFor="toggle-toggles" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
-                  Enable toggles
-                </label>
-              </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div
+                    style={{
+                      width: '44px',
+                      height: '24px',
+                      backgroundColor: enableToggles ? '#0066cc' : '#ccc',
+                      borderRadius: '12px',
+                      position: 'relative',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s ease'
+                    }}
+                    onClick={() => setEnableToggles(!enableToggles)}
+                  >
+                    <div style={{
+                      width: '20px',
+                      height: '20px',
+                      backgroundColor: 'white',
+                      borderRadius: '50%',
+                      position: 'absolute',
+                      top: '2px',
+                      left: enableToggles ? '22px' : '2px',
+                      transition: 'left 0.2s ease',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    }} />
+                  </div>
+                  <label htmlFor="toggle-toggles" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
+                    Enable toggles
+                  </label>
+                </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div 
-                  style={{
-                    width: '44px',
-                    height: '24px',
-                    backgroundColor: enableCheckboxes ? '#0066cc' : '#ccc',
-                    borderRadius: '12px',
-                    position: 'relative',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.2s ease'
-                  }}
-                  onClick={() => setEnableCheckboxes(!enableCheckboxes)}
-                >
-                  <div style={{
-                    width: '20px',
-                    height: '20px',
-                    backgroundColor: 'white',
-                    borderRadius: '50%',
-                    position: 'absolute',
-                    top: '2px',
-                    left: enableCheckboxes ? '22px' : '2px',
-                    transition: 'left 0.2s ease',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                  }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div
+                    style={{
+                      width: '44px',
+                      height: '24px',
+                      backgroundColor: enableCheckboxes ? '#0066cc' : '#ccc',
+                      borderRadius: '12px',
+                      position: 'relative',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s ease'
+                    }}
+                    onClick={() => setEnableCheckboxes(!enableCheckboxes)}
+                  >
+                    <div style={{
+                      width: '20px',
+                      height: '20px',
+                      backgroundColor: 'white',
+                      borderRadius: '50%',
+                      position: 'absolute',
+                      top: '2px',
+                      left: enableCheckboxes ? '22px' : '2px',
+                      transition: 'left 0.2s ease',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    }} />
+                  </div>
+                  <label htmlFor="toggle-checkboxes" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
+                    Checkbox Adders
+                  </label>
                 </div>
-                <label htmlFor="toggle-checkboxes" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
-                  Checkbox Adders
-                </label>
-              </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div
-                  style={{
-                    width: '44px',
-                    height: '24px',
-                    backgroundColor: searchInDropdown ? '#0066cc' : '#ccc',
-                    borderRadius: '12px',
-                    position: 'relative',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.2s ease'
-                  }}
-                  onClick={() => setSearchInDropdown(!searchInDropdown)}
-                >
-                  <div style={{
-                    width: '20px',
-                    height: '20px',
-                    backgroundColor: 'white',
-                    borderRadius: '50%',
-                    position: 'absolute',
-                    top: '2px',
-                    left: searchInDropdown ? '22px' : '2px',
-                    transition: 'left 0.2s ease',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                  }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div
+                    style={{
+                      width: '44px',
+                      height: '24px',
+                      backgroundColor: searchInDropdown ? '#0066cc' : '#ccc',
+                      borderRadius: '12px',
+                      position: 'relative',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s ease'
+                    }}
+                    onClick={() => setSearchInDropdown(!searchInDropdown)}
+                  >
+                    <div style={{
+                      width: '20px',
+                      height: '20px',
+                      backgroundColor: 'white',
+                      borderRadius: '50%',
+                      position: 'absolute',
+                      top: '2px',
+                      left: searchInDropdown ? '22px' : '2px',
+                      transition: 'left 0.2s ease',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    }} />
+                  </div>
+                  <label htmlFor="toggle-dropdown" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
+                    Search in Dropdown
+                  </label>
                 </div>
-                <label htmlFor="toggle-dropdown" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
-                  Search in Dropdown
-                </label>
               </div>
             </div>
           </div>
