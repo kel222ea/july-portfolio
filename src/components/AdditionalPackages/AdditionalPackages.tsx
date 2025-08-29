@@ -492,8 +492,18 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         padding: '16px'
       }}>
         <div style={{ width: '300px', position: 'relative' }}>
+          {!searchInDropdown && (
+            <div style={{ 
+              fontSize: '12px', 
+              color: '#666', 
+              marginBottom: '4px',
+              fontStyle: 'italic'
+            }}>
+              💡 Click any "Selection Handling" toggle above to enable dropdown search
+            </div>
+          )}
           <SearchInput
-            placeholder="Filter repositories"
+            placeholder={searchInDropdown ? "Search repositories (dropdown enabled)" : "Search repositories (enable dropdown toggle above)"}
             value={searchTerm}
             onChange={(event, value) => handleSearch(value)}
             onClear={handleClear}
@@ -682,8 +692,18 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         {/* Search and Controls */}
         <div style={{ margin: '20px 0', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
           <div style={{ width: '300px', position: 'relative' }}>
+            {!searchInDropdown && (
+              <div style={{ 
+                fontSize: '12px', 
+                color: '#666', 
+                marginBottom: '4px',
+                fontStyle: 'italic'
+              }}>
+                💡 Click any "Selection Handling" toggle above to enable dropdown search
+              </div>
+            )}
             <SearchInput
-              placeholder="Search packages"
+              placeholder={searchInDropdown ? "Search packages (dropdown enabled)" : "Search packages (enable dropdown toggle above)"}
               value={searchTerm}
               onChange={(event, value) => handleSearch(value)}
               onClear={handleClear}
