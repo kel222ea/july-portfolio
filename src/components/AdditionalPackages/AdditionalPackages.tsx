@@ -26,7 +26,7 @@ import {
   Th,
   Td,
 } from '@patternfly/react-table';
-import { RepositoryIcon, PackageIcon } from '@patternfly/react-icons';
+import { RepositoryIcon, PackageIcon, MinusIcon } from '@patternfly/react-icons';
 
 // Mock data types
 interface Package {
@@ -588,12 +588,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       color: '#666'
                     }}
                   >
-                                               <span style={{ 
-                             fontSize: '18px', 
-                             fontWeight: 'bold',
-                             color: '#666',
-                             lineHeight: '1'
-                           }}>−</span>
+                                               <MinusIcon style={{ color: '#666' }} />
                   </Button>
                 </Td>
               )}
@@ -745,12 +740,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                              color: '#666'
                            }}
                          >
-                           <span style={{ 
-                          fontSize: '18px', 
-                          fontWeight: 'bold',
-                          color: '#666',
-                          lineHeight: '1'
-                        }}>−</span>
+                           <MinusIcon style={{ color: '#666' }} />
                          </Button>
                        </Td>
                      )}
