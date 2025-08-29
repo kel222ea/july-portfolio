@@ -953,7 +953,12 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       cursor: 'pointer',
                       transition: 'background-color 0.2s ease'
                     }}
-                    onClick={() => setEnableToggles(!enableToggles)}
+                    onClick={() => {
+                    const newState = !enableToggles;
+                    setEnableToggles(newState);
+                    setEnableCheckboxes(newState);
+                    setSearchInDropdown(newState);
+                  }}
                   >
                     <div style={{
                       width: '20px',
@@ -983,7 +988,12 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       cursor: 'pointer',
                       transition: 'background-color 0.2s ease'
                     }}
-                    onClick={() => setEnableCheckboxes(!enableCheckboxes)}
+                    onClick={() => {
+                      const newState = !enableCheckboxes;
+                      setEnableToggles(newState);
+                      setEnableCheckboxes(newState);
+                      setSearchInDropdown(newState);
+                    }}
                   >
                     <div style={{
                       width: '20px',
@@ -1013,7 +1023,12 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       cursor: 'pointer',
                       transition: 'background-color 0.2s ease'
                     }}
-                    onClick={() => setSearchInDropdown(!searchInDropdown)}
+                    onClick={() => {
+                      const newState = !searchInDropdown;
+                      setEnableToggles(newState);
+                      setEnableCheckboxes(newState);
+                      setSearchInDropdown(newState);
+                    }}
                   >
                     <div style={{
                       width: '20px',
