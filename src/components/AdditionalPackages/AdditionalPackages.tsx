@@ -482,22 +482,24 @@ export const AdditionalPackages: React.FunctionComponent = () => {
 
 
 
-        <ToggleGroup aria-label="Filter repositories list" disabled={!enableToggles}>
-          <ToggleGroupItem
-            text={`All${mockRepositories ? ` (${hasViewedReposSelected ? mockRepositories.length - selectedRepositories.size : mockRepositories.length})` : ''}`}
-            aria-label="All repositories"
-            buttonId="toggle-repos-all"
-            isSelected={reposToggleSelected === 'toggle-repos-all'}
-            onChange={() => handleReposAllToggle()}
-          />
-          <ToggleGroupItem
-            text={`Selected${selectedRepositories.size ? ` (${selectedRepositories.size})` : ''}`}
-            aria-label="Selected repositories"
-            buttonId="toggle-repos-selected"
-            isSelected={reposToggleSelected === 'toggle-repos-selected'}
-            onChange={() => handleReposSelectedToggle()}
-          />
-        </ToggleGroup>
+        {enableToggles && (
+          <ToggleGroup aria-label="Filter repositories list">
+            <ToggleGroupItem
+              text={`All${mockRepositories ? ` (${hasViewedReposSelected ? mockRepositories.length - selectedRepositories.size : mockRepositories.length})` : ''}`}
+              aria-label="All repositories"
+              buttonId="toggle-repos-all"
+              isSelected={reposToggleSelected === 'toggle-repos-all'}
+              onChange={() => handleReposAllToggle()}
+            />
+            <ToggleGroupItem
+              text={`Selected${selectedRepositories.size ? ` (${selectedRepositories.size})` : ''}`}
+              aria-label="Selected repositories"
+              buttonId="toggle-repos-selected"
+              isSelected={reposToggleSelected === 'toggle-repos-selected'}
+              onChange={() => handleReposSelectedToggle()}
+            />
+          </ToggleGroup>
+        )}
       </div>
 
       {/* Repositories Table */}
@@ -604,20 +606,22 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           
 
           
-          <ToggleGroup disabled={!enableToggles}>
-            <ToggleGroupItem
-              text={`Available${searchTerm && filteredPackages.length > 0 ? (hasViewedPackagesSelected ? ` (${Math.max(0, filteredPackages.length - selectedCount)})` : ` (${filteredPackages.length})`) : ''}`}
-              buttonId="toggle-available"
-              isSelected={toggleSelected === 'toggle-available'}
-              onChange={() => handleAvailableToggle()}
-            />
-            <ToggleGroupItem
-              text={`Selected${selectedCount ? ` (${selectedCount})` : ''}`}
-              buttonId="toggle-selected"
-              isSelected={toggleSelected === 'toggle-selected'}
-              onChange={() => handleSelectedToggle()}
-            />
-          </ToggleGroup>
+          {enableToggles && (
+            <ToggleGroup>
+              <ToggleGroupItem
+                text={`Available${searchTerm && filteredPackages.length > 0 ? (hasViewedPackagesSelected ? ` (${Math.max(0, filteredPackages.length - selectedCount)})` : ` (${filteredPackages.length})`) : ''}`}
+                buttonId="toggle-available"
+                isSelected={toggleSelected === 'toggle-available'}
+                onChange={() => handleAvailableToggle()}
+              />
+              <ToggleGroupItem
+                text={`Selected${selectedCount ? ` (${selectedCount})` : ''}`}
+                buttonId="toggle-selected"
+                isSelected={toggleSelected === 'toggle-selected'}
+                onChange={() => handleSelectedToggle()}
+              />
+            </ToggleGroup>
+          )}
 
           <div style={{ marginLeft: 'auto' }}>
             <span>Items per page: </span>
