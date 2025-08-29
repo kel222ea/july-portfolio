@@ -235,6 +235,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const [showAsOneStep, setShowAsOneStep] = React.useState(false);
   const [activeStep, setActiveStep] = React.useState('custom-repositories');
   const [enableToggles, setEnableToggles] = React.useState(true);
+  const [enableCheckboxes, setEnableCheckboxes] = React.useState(true);
 
   // Computed values for packages
   const selectedCount = selectedPackages.size;
@@ -380,6 +381,20 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     }
   };
 
+  const handleRemoveRepository = (repoId: string) => {
+    // Remove repository from selected set
+    const newSelected = new Set(selectedRepositories);
+    newSelected.delete(repoId);
+    setSelectedRepositories(newSelected);
+  };
+
+  const handleRemovePackage = (packageName: string) => {
+    // Remove package from selected set
+    const newSelected = new Set(selectedPackages);
+    newSelected.delete(packageName);
+    setSelectedPackages(newSelected);
+  };
+
   const handleStepChange = (stepId: string) => {
     setActiveStep(stepId);
   };
@@ -507,12 +522,16 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         <Thead>
           <Tr>
             <Th>
-              <Checkbox
-                id="select-all-repos"
-                isChecked={selectedRepositories.size === filteredRepositories.length && filteredRepositories.length > 0}
-                onChange={(event, checked) => handleSelectAllRepositories(checked)}
-                aria-label="Select all repositories"
-              />
+              {enableCheckboxes ? (
+                <Checkbox
+                  id="select-all-repos"
+                  isChecked={selectedRepositories.size === filteredRepositories.length && filteredRepositories.length > 0}
+                  onChange={(event, checked) => handleSelectAllRepositories(checked)}
+                  aria-label="Select all repositories"
+                />
+              ) : (
+                <span style={{ fontSize: '12px', color: '#666' }}>Actions</span>
+              )}
             </Th>
             <Th width={45}>Name</Th>
             <Th width={15}>Architecture</Th>
@@ -521,18 +540,33 @@ export const AdditionalPackages: React.FunctionComponent = () => {
             <Th>Status</Th>
           </Tr>
         </Thead>
-        <Tbody>
-          {filteredRepositories.map((repo) => (
-            <Tr key={repo.id}>
-              <Td>
-                <Checkbox
-                  id={repo.id}
-                  isChecked={selectedRepositories.has(repo.id)}
-                  onChange={(event, checked) => handleRepositorySelect(event, checked)}
-                  aria-label="Select repository"
-                  data-repo-id={repo.id}
-                />
-              </Td>
+                    <Tbody>
+              {filteredRepositories.map((repo) => (
+                <Tr key={repo.id}>
+                  <Td>
+                    {enableCheckboxes ? (
+                      <Checkbox
+                        id={repo.id}
+                        isChecked={selectedRepositories.has(repo.id)}
+                        onChange={(event, checked) => handleRepositorySelect(event, checked)}
+                        aria-label="Select repository"
+                        data-repo-id={repo.id}
+                      />
+                    ) : (
+                      <Button
+                        variant="plain"
+                        aria-label="Remove repository"
+                        onClick={() => handleRemoveRepository(repo.id)}
+                        style={{ 
+                          padding: '4px', 
+                          minWidth: 'auto',
+                          color: '#666'
+                        }}
+                      >
+                        <span style={{ fontSize: '16px', fontWeight: 'bold' }}>−</span>
+                      </Button>
+                    )}
+                  </Td>
               <Td>
                 <div>
                   <strong>{repo.name}</strong>
@@ -662,24 +696,43 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           <Table aria-label="Packages table" variant="compact">
             <Thead>
               <Tr>
-                <Th aria-label="Select item"></Th>
+                <Th aria-label="Select item">
+                  {enableCheckboxes ? null : (
+                    <span style={{ fontSize: '12px', color: '#666' }}>Actions</span>
+                  )}
+                </Th>
                 <Th>Name</Th>
                 <Th>Source</Th>
                 <Th>Summary</Th>
               </Tr>
             </Thead>
-            <Tbody>
-              {paginatedPackages.map((pkg) => (
-                <Tr key={pkg.name}>
-                  <Td>
-                    <Checkbox
-                      id={`package-${pkg.name}`}
-                      isChecked={selectedPackages.has(pkg.name)}
-                      onChange={(event, checked) => handlePackageSelect(event, checked)}
-                      aria-label={`Select package ${pkg.name}`}
-                      data-package-name={pkg.name}
-                    />
-                  </Td>
+                          <Tbody>
+                {paginatedPackages.map((pkg) => (
+                  <Tr key={pkg.name}>
+                    <Td>
+                      {enableCheckboxes ? (
+                        <Checkbox
+                          id={`package-${pkg.name}`}
+                          isChecked={selectedPackages.has(pkg.name)}
+                          onChange={(event, checked) => handlePackageSelect(event, checked)}
+                          aria-label={`Select package ${pkg.name}`}
+                          data-package-name={pkg.name}
+                        />
+                      ) : (
+                        <Button
+                          variant="plain"
+                          aria-label="Remove package"
+                          onClick={() => handleRemovePackage(pkg.name)}
+                          style={{ 
+                            padding: '4px', 
+                            minWidth: 'auto',
+                            color: '#666'
+                          }}
+                        >
+                          <span style={{ fontSize: '16px', fontWeight: 'bold' }}>−</span>
+                        </Button>
+                      )}
+                    </Td>
                   <Td>{pkg.name}</Td>
                   <Td>{pkg.source}</Td>
                   <Td>{pkg.summary}</Td>
@@ -799,6 +852,36 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 </div>
                 <label htmlFor="toggle-toggles" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
                   Enable toggles
+                </label>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div 
+                  style={{
+                    width: '44px',
+                    height: '24px',
+                    backgroundColor: enableCheckboxes ? '#0066cc' : '#ccc',
+                    borderRadius: '12px',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onClick={() => setEnableCheckboxes(!enableCheckboxes)}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: 'white',
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    top: '2px',
+                    left: enableCheckboxes ? '22px' : '2px',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }} />
+                </div>
+                <label htmlFor="toggle-checkboxes" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
+                  Checkbox Adders
                 </label>
               </div>
             </div>
