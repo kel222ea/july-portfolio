@@ -588,7 +588,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       color: '#666'
                     }}
                   >
-                                               <MinusCircleIcon style={{ color: '#000' }} />
+                                               <MinusCircleIcon style={{ color: '#6a6e73' }} />
                   </Button>
                 </Td>
               )}
