@@ -367,11 +367,11 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   };
 
   const handleSelectAllRepositories = (checked: boolean) => {
-    if (checked) {
+      if (checked) {
       // Select all filtered repositories
       const allRepoIds = filteredRepositories.map(repo => repo.id);
       setSelectedRepositories(new Set(allRepoIds));
-    } else {
+      } else {
       // Deselect all repositories
       setSelectedRepositories(new Set());
     }
@@ -381,7 +381,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     // Remove repository from selected set
     const newSelected = new Set(selectedRepositories);
     newSelected.delete(repoId);
-    setSelectedRepositories(newSelected);
+      setSelectedRepositories(newSelected);
   };
 
   const handleRemovePackage = (packageName: string) => {
@@ -492,16 +492,6 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         padding: '16px'
       }}>
         <div style={{ width: '300px', position: 'relative' }}>
-          {!searchInDropdown && (
-            <div style={{ 
-              fontSize: '12px', 
-              color: '#666', 
-              marginBottom: '4px',
-              fontStyle: 'italic'
-            }}>
-              💡 Click any "Selection Handling" toggle above to enable dropdown search
-            </div>
-          )}
           <SearchInput
             placeholder={searchInDropdown ? "Search repositories (dropdown enabled)" : "Search repositories (enable dropdown toggle above)"}
             value={searchTerm}
@@ -557,22 +547,22 @@ export const AdditionalPackages: React.FunctionComponent = () => {
 
 
         {enableToggles && (
-          <ToggleGroup aria-label="Filter repositories list">
-            <ToggleGroupItem
+        <ToggleGroup aria-label="Filter repositories list">
+          <ToggleGroupItem
               text={`All${mockRepositories ? ` (${hasViewedReposSelected ? mockRepositories.length - selectedRepositories.size : mockRepositories.length})` : ''}`}
-              aria-label="All repositories"
-              buttonId="toggle-repos-all"
-              isSelected={reposToggleSelected === 'toggle-repos-all'}
+            aria-label="All repositories"
+            buttonId="toggle-repos-all"
+            isSelected={reposToggleSelected === 'toggle-repos-all'}
               onChange={() => handleReposAllToggle()}
-            />
-            <ToggleGroupItem
-              text={`Selected${selectedRepositories.size ? ` (${selectedRepositories.size})` : ''}`}
-              aria-label="Selected repositories"
-              buttonId="toggle-repos-selected"
-              isSelected={reposToggleSelected === 'toggle-repos-selected'}
+          />
+          <ToggleGroupItem
+            text={`Selected${selectedRepositories.size ? ` (${selectedRepositories.size})` : ''}`}
+            aria-label="Selected repositories"
+            buttonId="toggle-repos-selected"
+            isSelected={reposToggleSelected === 'toggle-repos-selected'}
               onChange={() => handleReposSelectedToggle()}
-            />
-          </ToggleGroup>
+          />
+        </ToggleGroup>
         )}
       </div>
 
@@ -600,41 +590,41 @@ export const AdditionalPackages: React.FunctionComponent = () => {
             )}
           </Tr>
         </Thead>
-        <Tbody>
-          {filteredRepositories.map((repo) => (
-            <Tr key={repo.id}>
+                    <Tbody>
+              {filteredRepositories.map((repo) => (
+                <Tr key={repo.id}>
               {enableCheckboxes && (
-                <Td>
-                  <Checkbox
-                    id={repo.id}
-                    isChecked={selectedRepositories.has(repo.id)}
+                  <Td>
+                    <Checkbox
+                      id={repo.id}
+                      isChecked={selectedRepositories.has(repo.id)}
                     onChange={(event, checked) => handleRepositorySelect(event, checked)}
-                    aria-label="Select repository"
+                      aria-label="Select repository"
                     data-repo-id={repo.id}
-                  />
-                </Td>
+                    />
+                  </Td>
               )}
-              <Td>
-                <div>
-                  <strong>{repo.name}</strong>
-                  <br />
-                  <Button
-                    component="a"
-                    target="_blank"
-                    variant="link"
-                    isInline
-                    href={repo.url}
-                  >
-                    {repo.url}
-                </Button>
-                </div>
-              </Td>
-              <Td>{repo.arch}</Td>
-              <Td>{repo.version}</Td>
-              <Td>{repo.packages.toLocaleString()}</Td>
-              <Td>
-                <span style={{ color: 'green' }}>{repo.status}</span>
-              </Td>
+                  <Td>
+                    <div>
+                      <strong>{repo.name}</strong>
+                      <br />
+                      <Button
+                        component="a"
+                        target="_blank"
+                        variant="link"
+                        isInline
+                        href={repo.url}
+                      >
+                        {repo.url}
+                      </Button>
+                    </div>
+                  </Td>
+                  <Td>{repo.arch}</Td>
+                  <Td>{repo.version}</Td>
+                  <Td>{repo.packages.toLocaleString()}</Td>
+                  <Td>
+                    <span style={{ color: 'green' }}>{repo.status}</span>
+                  </Td>
               {!enableCheckboxes && (
                 <Td>
                   <Button
@@ -651,9 +641,9 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                   </Button>
                 </Td>
               )}
-            </Tr>
-          ))}
-        </Tbody>
+                </Tr>
+              ))}
+            </Tbody>
       </Table>
 
       {/* Pagination */}
@@ -682,7 +672,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
             Blueprints created with Images include all required packages.
           </p>
         </div>
-
+      
         <Alert variant={AlertVariant.info} isInline title="Search for package groups">
           Search for package groups by starting your search with the '@' character. A single '@' as search input lists all available package groups.
         </Alert>
@@ -692,16 +682,6 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         {/* Search and Controls */}
         <div style={{ margin: '20px 0', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
           <div style={{ width: '300px', position: 'relative' }}>
-            {!searchInDropdown && (
-              <div style={{ 
-                fontSize: '12px', 
-                color: '#666', 
-                marginBottom: '4px',
-                fontStyle: 'italic'
-              }}>
-                💡 Click any "Selection Handling" toggle above to enable dropdown search
-              </div>
-            )}
             <SearchInput
               placeholder={searchInDropdown ? "Search packages (dropdown enabled)" : "Search packages (enable dropdown toggle above)"}
               value={searchTerm}
@@ -753,20 +733,20 @@ export const AdditionalPackages: React.FunctionComponent = () => {
 
           
           {enableToggles && (
-            <ToggleGroup>
-              <ToggleGroupItem
+          <ToggleGroup>
+            <ToggleGroupItem
                 text={`Available${searchTerm && filteredPackages.length > 0 ? (hasViewedPackagesSelected ? ` (${Math.max(0, filteredPackages.length - selectedCount)})` : ` (${filteredPackages.length})`) : ''}`}
-                buttonId="toggle-available"
-                isSelected={toggleSelected === 'toggle-available'}
+              buttonId="toggle-available"
+              isSelected={toggleSelected === 'toggle-available'}
                 onChange={() => handleAvailableToggle()}
-              />
-              <ToggleGroupItem
-                text={`Selected${selectedCount ? ` (${selectedCount})` : ''}`}
-                buttonId="toggle-selected"
-                isSelected={toggleSelected === 'toggle-selected'}
+            />
+            <ToggleGroupItem
+              text={`Selected${selectedCount ? ` (${selectedCount})` : ''}`}
+              buttonId="toggle-selected"
+              isSelected={toggleSelected === 'toggle-selected'}
                 onChange={() => handleSelectedToggle()}
-              />
-            </ToggleGroup>
+            />
+          </ToggleGroup>
           )}
 
           <div style={{ marginLeft: 'auto' }}>
@@ -810,33 +790,33 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           flexDirection: 'column'
         }}>
           {(searchTerm || toggleSelected === 'toggle-selected') ? (
-            <Table aria-label="Packages table" variant="compact">
-              <Thead>
-                <Tr>
+          <Table aria-label="Packages table" variant="compact">
+            <Thead>
+              <Tr>
                   {enableCheckboxes && (
-                    <Th aria-label="Select item"></Th>
+                <Th aria-label="Select item"></Th>
                   )}
-                  <Th>Name</Th>
+                <Th>Name</Th>
                   <Th>Source</Th>
                   <Th>Summary</Th>
                   {!enableCheckboxes && (
                     <Th width={10}>Actions</Th>
                   )}
-                </Tr>
-              </Thead>
-              <Tbody>
-                {paginatedPackages.map((pkg) => (
-                  <Tr key={pkg.name}>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {paginatedPackages.map((pkg) => (
+                <Tr key={pkg.name}>
                     {enableCheckboxes && (
-                      <Td>
-                        <Checkbox
-                          id={`package-${pkg.name}`}
-                          isChecked={selectedPackages.has(pkg.name)}
+                  <Td>
+                    <Checkbox
+                      id={`package-${pkg.name}`}
+                      isChecked={selectedPackages.has(pkg.name)}
                           onChange={(event, checked) => handlePackageSelect(event, checked)}
-                          aria-label={`Select package ${pkg.name}`}
-                          data-package-name={pkg.name}
-                        />
-                      </Td>
+                      aria-label={`Select package ${pkg.name}`}
+                      data-package-name={pkg.name}
+                    />
+                  </Td>
                     )}
                     <Td>{pkg.name}</Td>
                     <Td>{pkg.source}</Td>
@@ -855,44 +835,44 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                         >
                           <MinusCircleIcon style={{ color: '#000' }} />
                         </Button>
-                      </Td>
+                  </Td>
                     )}
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          ) : (
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        ) : (
             /* Empty state placeholder to preserve height */
-            <div style={{ 
+          <div style={{ 
               height: showAsOneStep ? '300px' : 'auto',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#666',
+            color: '#666',
               fontSize: '14px',
               border: '1px dashed #ccc',
               borderRadius: '4px',
               backgroundColor: '#f8f9fa'
-            }}>
+          }}>
               {(toggleSelected as string) === 'toggle-selected' 
                 ? 'No packages selected. Use the search above to find and select packages.'
                 : 'Search for packages to see results here.'
               }
-            </div>
-          )}
+          </div>
+        )}
         </div>
 
         {/* Pagination */}
         {totalItems > perPage && (
           <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
-            <Pagination
-              itemCount={totalItems}
-              perPage={perPage}
-              page={page}
-              onSetPage={onSetPage}
-              onPerPageSelect={onPerPageSelect}
-              variant={PaginationVariant.bottom}
-            />
+        <Pagination
+          itemCount={totalItems}
+          perPage={perPage}
+          page={page}
+          onSetPage={onSetPage}
+          onPerPageSelect={onPerPageSelect}
+          variant={PaginationVariant.bottom}
+        />
           </div>
         )}
       </div>
@@ -979,7 +959,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               }}>
                 <div style={{ fontSize: '12px', fontWeight: '600', color: '#666', marginBottom: '8px', width: '100%' }}>
                   Selection Handling
-                </div>
+            </div>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div
@@ -1023,7 +1003,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                   <label htmlFor="toggle-toggles" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
                     Enable toggles
                   </label>
-                </div>
+          </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div
@@ -1063,11 +1043,11 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       transition: 'left 0.2s ease',
                       boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
                     }} />
-                  </div>
+                </div>
                   <label htmlFor="toggle-checkboxes" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
                     Checkbox Adders
                   </label>
-                </div>
+              </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div
@@ -1107,31 +1087,31 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       transition: 'left 0.2s ease',
                       boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
                     }} />
-                  </div>
+                </div>
                   <label htmlFor="toggle-dropdown" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
                     Search in Dropdown
                   </label>
-                </div>
               </div>
+        </div>
             </div>
           </div>
 
           {/* Main Content with Sidebar */}
           <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-            {/* Left Sidebar Navigation */}
-            <div style={{ 
-              width: '250px', 
-              backgroundColor: '#f8f9fa', 
-              borderRight: '1px solid #d1d1d1',
-              padding: '20px',
-              overflowY: 'auto',
-              flexShrink: 0
+          {/* Left Sidebar Navigation */}
+          <div style={{ 
+            width: '250px', 
+            backgroundColor: '#f8f9fa', 
+            borderRight: '1px solid #d1d1d1',
+            padding: '20px',
+            overflowY: 'auto',
+            flexShrink: 0
+          }}>
+            <Nav onSelect={(event, itemId) => {
+              const stepId = typeof itemId === 'string' ? itemId : itemId.itemId;
+              handleStepChange(stepId);
             }}>
-              <Nav onSelect={(event, itemId) => {
-                const stepId = typeof itemId === 'string' ? itemId : itemId.itemId;
-                handleStepChange(stepId);
-              }}>
-                <NavList>
+              <NavList>
                   {showAsOneStep ? (
                     /* Combined Step Navigation */
                     <NavItem 
@@ -1158,55 +1138,55 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                   ) : (
                     /* Two Step Navigation */
                     <>
-                      <NavItem 
-                        itemId="custom-repositories" 
-                        isActive={activeStep === 'custom-repositories'}
-                        className="custom-nav-item"
-                      >
-                        <div style={{ 
-                          display: 'flex', 
-                          alignItems: 'center',
-                          color: activeStep === 'custom-repositories' ? '#0066cc' : '#333'
-                        }}>
-                          <RepositoryIcon style={{ 
-                            marginRight: '12px', 
-                            color: activeStep === 'custom-repositories' ? '#0066cc' : '#666'
-                          }} />
-                          <span style={{ 
-                            fontWeight: activeStep === 'custom-repositories' ? '600' : '400'
-                          }}>
-                            Step 1: Custom Repositories
-                          </span>
-                        </div>
-                      </NavItem>
-                      <NavItem 
-                        itemId="additional-packages" 
-                        isActive={activeStep === 'additional-packages'}
-                        className="custom-nav-item"
-                      >
-                        <div style={{ 
-                          display: 'flex', 
-                          alignItems: 'center',
-                          color: activeStep === 'additional-packages' ? '#0066cc' : '#666'
-                        }}>
-                          <PackageIcon style={{ 
-                            marginRight: '12px', 
-                            color: activeStep === 'additional-packages' ? '#0066cc' : '#666'
-                          }} />
-                          <span style={{ 
-                            fontWeight: activeStep === 'additional-packages' ? '600' : '400'
-                          }}>
-                            Step 2: Additional Packages
-                          </span>
-                        </div>
-                      </NavItem>
+                <NavItem 
+                  itemId="custom-repositories" 
+                  isActive={activeStep === 'custom-repositories'}
+                  className="custom-nav-item"
+                >
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center',
+                    color: activeStep === 'custom-repositories' ? '#0066cc' : '#333'
+                  }}>
+                    <RepositoryIcon style={{ 
+                      marginRight: '12px', 
+                      color: activeStep === 'custom-repositories' ? '#0066cc' : '#666'
+                    }} />
+                    <span style={{ 
+                      fontWeight: activeStep === 'custom-repositories' ? '600' : '400'
+                    }}>
+                      Step 1: Custom Repositories
+                    </span>
+                  </div>
+                </NavItem>
+                <NavItem 
+                  itemId="additional-packages" 
+                  isActive={activeStep === 'additional-packages'}
+                  className="custom-nav-item"
+                >
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center',
+                    color: activeStep === 'additional-packages' ? '#0066cc' : '#666'
+                  }}>
+                                      <PackageIcon style={{ 
+                    marginRight: '12px', 
+                    color: activeStep === 'additional-packages' ? '#0066cc' : '#666'
+                  }} />
+                    <span style={{ 
+                      fontWeight: activeStep === 'additional-packages' ? '600' : '400'
+                    }}>
+                      Step 2: Additional Packages
+                    </span>
+                  </div>
+                </NavItem>
                     </>
                   )}
-                </NavList>
-              </Nav>
-            </div>
+              </NavList>
+            </Nav>
+          </div>
 
-            {/* Main Content Area */}
+          {/* Main Content Area */}
             <div style={{ 
               flex: 1, 
               padding: '20px',
@@ -1229,24 +1209,24 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               ) : (
                 /* Two Step View - Show content based on active step */
                 <>
-                  {/* Custom Repositories Step */}
-                  <div style={{ 
-                    marginBottom: '40px',
-                    display: activeStep === 'custom-repositories' ? 'block' : 'none'
-                  }}>
-                    {renderCustomRepositories()}
-                  </div>
+            {/* Custom Repositories Step */}
+            <div style={{ 
+              marginBottom: '40px',
+              display: activeStep === 'custom-repositories' ? 'block' : 'none'
+            }}>
+              {renderCustomRepositories()}
+            </div>
 
-                  {/* Additional Packages Step */}
-                  <div style={{
-                    display: activeStep === 'additional-packages' ? 'block' : 'none'
-                  }}>
-                    {renderAdditionalPackages()}
-                  </div>
+            {/* Additional Packages Step */}
+            <div style={{
+              display: activeStep === 'additional-packages' ? 'block' : 'none'
+            }}>
+              {renderAdditionalPackages()}
+            </div>
                 </>
               )}
-            </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
