@@ -208,6 +208,13 @@ const mockRepositories: Repository[] = [
   { id: 'repo1', name: 'EPEL Repository', url: 'https://dl.fedoraproject.org/pub/epel/', arch: 'x86_64', version: '8', packages: 15000, status: 'Active' },
   { id: 'repo2', name: 'RPM Fusion', url: 'https://rpmfusion.org/', arch: 'x86_64', version: '8', packages: 8000, status: 'Active' },
   { id: 'repo3', name: 'Custom Internal', url: 'https://internal.company.com/repos/', arch: 'x86_64', version: '8', packages: 2500, status: 'Active' },
+  { id: 'repo4', name: 'CentOS Stream', url: 'https://mirror.stream.centos.org/', arch: 'x86_64', version: '9', packages: 12000, status: 'Active' },
+  { id: 'repo5', name: 'Fedora Rawhide', url: 'https://download.fedoraproject.org/pub/fedora/linux/development/rawhide/', arch: 'x86_64', version: '40', packages: 25000, status: 'Active' },
+  { id: 'repo6', name: 'RHEL 8 Base', url: 'https://cdn.redhat.com/content/dist/rhel8/', arch: 'x86_64', version: '8', packages: 18000, status: 'Active' },
+  { id: 'repo7', name: 'RHEL 9 Base', url: 'https://cdn.redhat.com/content/dist/rhel9/', arch: 'x86_64', version: '9', packages: 20000, status: 'Active' },
+  { id: 'repo8', name: 'AlmaLinux 8', url: 'https://repo.almalinux.org/almalinux/8/', arch: 'x86_64', version: '8', packages: 16000, status: 'Active' },
+  { id: 'repo9', name: 'Rocky Linux 8', url: 'https://download.rockylinux.org/pub/rocky/8/', arch: 'x86_64', version: '8', packages: 15000, status: 'Active' },
+  { id: 'repo10', name: 'Oracle Linux 8', url: 'https://yum.oracle.com/repo/OracleLinux/OL8/', arch: 'x86_64', version: '8', packages: 14000, status: 'Active' },
 ];
 
 export const AdditionalPackages: React.FunctionComponent = () => {
@@ -222,7 +229,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const [hasViewedPackagesSelected, setHasViewedPackagesSelected] = React.useState(false);
 
   // State for repositories
-  const [selectedRepositories, setSelectedRepositories] = React.useState<Set<string>>(new Set(['repo1', 'repo2']));
+  const [selectedRepositories, setSelectedRepositories] = React.useState<Set<string>>(new Set(['repo1', 'repo3']));
   const [reposToggleSelected, setReposToggleSelected] = React.useState<'toggle-repos-all' | 'toggle-repos-selected'>('toggle-repos-all');
   const [hasViewedReposSelected, setHasViewedReposSelected] = React.useState(false);
 
@@ -268,28 +275,46 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   // Total items for pagination
   const totalItems = toggleFilteredPackages.length;
 
-  // Filter repositories
+  // Filter repositories for dropdown (only when searchInDropdown is enabled)
+  const dropdownFilteredRepositories = React.useMemo(() => {
+    if (!searchInDropdown || !searchTerm) {
+      return [];
+    }
+    
+    return mockRepositories.filter(repo => 
+      repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      repo.url.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm, searchInDropdown]);
+
+  // Filter repositories for main table
   const filteredRepositories = React.useMemo(() => {
     let filtered = [...mockRepositories];
     
-    // Apply search term filtering
-    if (searchTerm) {
-      filtered = filtered.filter(repo => 
-        repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        repo.url.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    
-    // Apply toggle filtering
-    if (reposToggleSelected === 'toggle-repos-selected') {
+    // When searchInDropdown is enabled, only show selected repositories
+    if (searchInDropdown) {
       filtered = filtered.filter(repo => selectedRepositories.has(repo.id));
-      if (!hasViewedReposSelected) {
-        setHasViewedReposSelected(true);
+    } else {
+      // When searchInDropdown is disabled, use original behavior
+      // Apply search term filtering to table
+      if (searchTerm) {
+        filtered = filtered.filter(repo => 
+          repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          repo.url.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+      
+      // Apply toggle filtering
+      if (reposToggleSelected === 'toggle-repos-selected') {
+        filtered = filtered.filter(repo => selectedRepositories.has(repo.id));
+        if (!hasViewedReposSelected) {
+          setHasViewedReposSelected(true);
+        }
       }
     }
     
     return filtered;
-  }, [searchTerm, reposToggleSelected, selectedRepositories, hasViewedReposSelected]);
+  }, [searchTerm, searchInDropdown, reposToggleSelected, selectedRepositories, hasViewedReposSelected]);
 
   // Event handlers
   const handleSearch = (value: string) => {
@@ -396,6 +421,9 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     const newSelected = new Set(selectedRepositories);
     newSelected.add(repo.id);
     setSelectedRepositories(newSelected);
+    
+    // Clear search term but stay in current view so user can see the addition in context
+    setSearchTerm('');
   };
 
   const handleAddPackage = (pkg: Package) => {
@@ -403,6 +431,9 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     const newSelected = new Set(selectedPackages);
     newSelected.add(pkg.name);
     setSelectedPackages(newSelected);
+    
+    // Clear search term but stay in current view so user can see the addition in context
+    setSearchTerm('');
   };
 
   const handleStepChange = (stepId: string) => {
@@ -513,29 +544,47 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               overflowY: 'auto',
               zIndex: 1000
             }}>
-              {filteredRepositories.slice(0, 5).map((repo) => (
-                <div
-                  key={repo.id}
-                  onClick={() => handleAddRepository(repo)}
-                  style={{
-                    padding: '8px 12px',
-                    cursor: 'pointer',
-                    borderBottom: '1px solid #f0f0f0',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
-                >
-                  <div>
-                    <strong>{repo.name}</strong>
-                    <br />
-                    <small style={{ color: '#666' }}>{repo.url}</small>
+              {dropdownFilteredRepositories.slice(0, 5).map((repo) => {
+                const isAlreadySelected = selectedRepositories.has(repo.id);
+                return (
+                  <div
+                    key={repo.id}
+                    onClick={() => !isAlreadySelected && handleAddRepository(repo)}
+                    style={{
+                      padding: '8px 12px',
+                      cursor: isAlreadySelected ? 'not-allowed' : 'pointer',
+                      borderBottom: '1px solid #f0f0f0',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      backgroundColor: isAlreadySelected ? '#f8f9fa' : 'white',
+                      opacity: isAlreadySelected ? 0.6 : 1
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isAlreadySelected) {
+                        e.currentTarget.style.backgroundColor = '#f5f5f5';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isAlreadySelected) {
+                        e.currentTarget.style.backgroundColor = 'white';
+                      }
+                    }}
+                  >
+                    <div>
+                      <strong>{repo.name}</strong>
+                      <br />
+                      <small style={{ color: '#666' }}>{repo.url}</small>
+                    </div>
+                    <span style={{ 
+                      color: isAlreadySelected ? '#999' : '#0066cc', 
+                      fontSize: '12px' 
+                    }}>
+                      {isAlreadySelected ? '✓ Added' : '+ Add'}
+                    </span>
                   </div>
-                  <span style={{ color: '#0066cc', fontSize: '12px' }}>+ Add</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -546,7 +595,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
 
 
 
-        {enableToggles && (
+        {enableToggles && !searchInDropdown && (
         <ToggleGroup aria-label="Filter repositories list">
           <ToggleGroupItem
               text={`All${mockRepositories ? ` (${hasViewedReposSelected ? mockRepositories.length - selectedRepositories.size : mockRepositories.length})` : ''}`}
@@ -563,6 +612,12 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               onChange={() => handleReposSelectedToggle()}
           />
         </ToggleGroup>
+        )}
+        
+        {enableToggles && searchInDropdown && (
+        <div style={{ color: '#666', fontSize: '14px' }}>
+          Selected repositories: {selectedRepositories.size}
+        </div>
         )}
       </div>
 
@@ -606,7 +661,9 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               )}
                   <Td>
                     <div>
-                      <strong>{repo.name}</strong>
+                      <strong>
+                        {repo.name}
+                      </strong>
                       <br />
                       <Button
                         component="a"
@@ -637,7 +694,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       color: '#666'
                     }}
                   >
-                                               <MinusCircleIcon style={{ color: '#6a6e73' }} />
+                    <MinusCircleIcon style={{ color: '#6a6e73' }} />
                   </Button>
                 </Td>
               )}
