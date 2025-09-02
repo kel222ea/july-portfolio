@@ -244,36 +244,53 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const selectedCount = selectedPackages.size;
   const totalAvailableItems = includedRepoPackages.length + otherRepoPackages.length;
 
-  // Filter packages based on search term and active tab
-  const filteredPackages = React.useMemo(() => {
+  // Filter packages for dropdown (only when searchInDropdown is enabled)
+  const dropdownFilteredPackages = React.useMemo(() => {
+    if (!searchInDropdown || !searchTerm) {
+      return [];
+    }
+    
     const sourcePackages = activeTabKey === 'included-repos' ? includedRepoPackages : otherRepoPackages;
-    let filtered = sourcePackages.filter(pkg => {
+    return sourcePackages.filter(pkg => {
       const nameMatch = pkg.name.toLowerCase().startsWith(searchTerm.toLowerCase());
       return nameMatch;
     });
-    return filtered;
-  }, [searchTerm, activeTabKey]);
+  }, [searchTerm, activeTabKey, searchInDropdown]);
 
-  // Apply toggle filtering (Available/Selected)
-  const toggleFilteredPackages = React.useMemo(() => {
-    let filtered = [...filteredPackages];
-    if (toggleSelected === 'toggle-selected') {
-      filtered = filtered.filter(pkg => selectedPackages.has(pkg.name));
-      if (!hasViewedPackagesSelected) {
-        setHasViewedPackagesSelected(true);
+  // Filter packages for main table
+  const filteredPackages = React.useMemo(() => {
+    const sourcePackages = activeTabKey === 'included-repos' ? includedRepoPackages : otherRepoPackages;
+    
+    // When searchInDropdown is enabled, only show selected packages
+    if (searchInDropdown) {
+      return sourcePackages.filter(pkg => selectedPackages.has(pkg.name));
+    } else {
+      // When searchInDropdown is disabled, use original behavior
+      let filtered = sourcePackages.filter(pkg => {
+        const nameMatch = pkg.name.toLowerCase().startsWith(searchTerm.toLowerCase());
+        return nameMatch;
+      });
+      
+      // Apply toggle filtering
+      if (toggleSelected === 'toggle-selected') {
+        filtered = filtered.filter(pkg => selectedPackages.has(pkg.name));
+        if (!hasViewedPackagesSelected) {
+          setHasViewedPackagesSelected(true);
+        }
       }
+      
+      return filtered;
     }
-    return filtered;
-  }, [filteredPackages, toggleSelected, selectedPackages, hasViewedPackagesSelected]);
+  }, [searchTerm, activeTabKey, searchInDropdown, toggleSelected, selectedPackages, hasViewedPackagesSelected]);
 
   // Paginate packages
   const paginatedPackages = React.useMemo(() => {
     const startIndex = (page - 1) * perPage;
-    return toggleFilteredPackages.slice(startIndex, startIndex + perPage);
-  }, [toggleFilteredPackages, page, perPage]);
+    return filteredPackages.slice(startIndex, startIndex + perPage);
+  }, [filteredPackages, page, perPage]);
 
   // Total items for pagination
-  const totalItems = toggleFilteredPackages.length;
+  const totalItems = filteredPackages.length;
 
   // Filter repositories for dropdown (only when searchInDropdown is enabled)
   const dropdownFilteredRepositories = React.useMemo(() => {
@@ -760,36 +777,54 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 overflowY: 'auto',
                 zIndex: 1000
               }}>
-                {filteredPackages.slice(0, 5).map((pkg) => (
+                {dropdownFilteredPackages.slice(0, 5).map((pkg) => {
+                  const isAlreadySelected = selectedPackages.has(pkg.name);
+                  return (
                   <div
                     key={pkg.name}
-                    onClick={() => handleAddPackage(pkg)}
+                    onClick={() => !isAlreadySelected && handleAddPackage(pkg)}
                     style={{
                       padding: '8px 12px',
-                      cursor: 'pointer',
+                      cursor: isAlreadySelected ? 'not-allowed' : 'pointer',
                       borderBottom: '1px solid #f0f0f0',
                       display: 'flex',
                       justifyContent: 'space-between',
-                      alignItems: 'center'
+                      alignItems: 'center',
+                      backgroundColor: isAlreadySelected ? '#f8f9fa' : 'white',
+                      opacity: isAlreadySelected ? 0.6 : 1
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                    onMouseEnter={(e) => {
+                      if (!isAlreadySelected) {
+                        e.currentTarget.style.backgroundColor = '#f5f5f5';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isAlreadySelected) {
+                        e.currentTarget.style.backgroundColor = 'white';
+                      }
+                    }}
                   >
                     <div>
                       <strong>{pkg.name}</strong>
                       <br />
                       <small style={{ color: '#666' }}>{pkg.summary}</small>
                     </div>
-                    <span style={{ color: '#0066cc', fontSize: '12px' }}>+ Add</span>
+                    <span style={{ 
+                      color: isAlreadySelected ? '#999' : '#0066cc', 
+                      fontSize: '12px' 
+                    }}>
+                      {isAlreadySelected ? '✓ Added' : '+ Add'}
+                    </span>
                   </div>
-                ))}
+                );
+              })}
               </div>
             )}
           </div>
           
 
           
-          {enableToggles && (
+          {enableToggles && !searchInDropdown && (
           <ToggleGroup>
             <ToggleGroupItem
                 text={`Available${searchTerm && filteredPackages.length > 0 ? (hasViewedPackagesSelected ? ` (${Math.max(0, filteredPackages.length - selectedCount)})` : ` (${filteredPackages.length})`) : ''}`}
@@ -804,6 +839,12 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 onChange={() => handleSelectedToggle()}
             />
           </ToggleGroup>
+          )}
+          
+          {enableToggles && searchInDropdown && (
+          <div style={{ color: '#666', fontSize: '14px' }}>
+            Selected packages: {selectedCount}
+          </div>
           )}
 
           <div style={{ marginLeft: 'auto' }}>
@@ -846,7 +887,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           display: 'flex',
           flexDirection: 'column'
         }}>
-          {(searchTerm || toggleSelected === 'toggle-selected') ? (
+          {(searchInDropdown && selectedPackages.size > 0) || (!searchInDropdown && (searchTerm || toggleSelected === 'toggle-selected')) ? (
           <Table aria-label="Packages table" variant="compact">
             <Thead>
               <Tr>
