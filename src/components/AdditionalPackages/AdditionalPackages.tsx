@@ -243,6 +243,8 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const [otherReposEnabled, setOtherReposEnabled] = React.useState(true);
   const [searchingInOtherRepos, setSearchingInOtherRepos] = React.useState(false);
   const [isLoadingOtherRepos, setIsLoadingOtherRepos] = React.useState(false);
+  const [groupSearchEnabled, setGroupSearchEnabled] = React.useState(false);
+  const [packageTypeFilter, setPackageTypeFilter] = React.useState<'individual' | 'group'>('individual');
 
   // Computed values for packages
   const selectedCount = selectedPackages.size;
@@ -833,14 +835,35 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           </p>
         </div>
       
-        <Alert variant={AlertVariant.info} isInline title="Search for package groups">
-          Search for package groups by starting your search with the '@' character. A single '@' as search input lists all available package groups.
-        </Alert>
+        {!groupSearchEnabled && (
+          <Alert variant={AlertVariant.info} isInline title="Search for package groups">
+            Search for package groups by starting your search with the '@' character. A single '@' as search input lists all available package groups.
+          </Alert>
+        )}
       
 
 
         {/* Search and Controls */}
-        <div style={{ margin: '20px 0', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ margin: '20px 0', display: 'flex', gap: '16px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+          {groupSearchEnabled && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <div style={{ fontSize: '14px', fontWeight: '600', color: '#151515', marginBottom: '4px' }}>Package type</div>
+              <select 
+                value={packageTypeFilter} 
+                onChange={(e) => setPackageTypeFilter(e.target.value as 'individual' | 'group')}
+                style={{ 
+                  padding: '8px 12px', 
+                  border: '1px solid #ccc', 
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  minWidth: '140px'
+                }}
+              >
+                <option value="individual">Individual package</option>
+                <option value="group">Package group</option>
+              </select>
+            </div>
+          )}
           <div style={{ width: '300px', position: 'relative' }}>
             <SearchInput
               placeholder={searchInDropdown ? "Search packages (dropdown enabled)" : "Search packages (enable dropdown toggle above)"}
@@ -959,19 +982,6 @@ export const AdditionalPackages: React.FunctionComponent = () => {
             Selected packages: {selectedCount}
           </div>
           )}
-
-          <div style={{ marginLeft: 'auto' }}>
-            <span>Items per page: </span>
-            <select 
-              value={perPage} 
-              onChange={(e) => setPerPage(Number(e.target.value))}
-              style={{ padding: '5px', marginLeft: '5px' }}
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-            </select>
-          </div>
         </div>
 
         {/* Horizontal Tabs - only show when Other Repos toggle is ON */}
@@ -1330,6 +1340,37 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 </div>
                 <label htmlFor="toggle-other-repos" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
                   Other Repos
+                </label>
+              </div>
+
+              {/* Group Search Toggle */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '24px',
+                    backgroundColor: groupSearchEnabled ? '#0066cc' : '#ccc',
+                    borderRadius: '12px',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onClick={() => setGroupSearchEnabled(!groupSearchEnabled)}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: 'white',
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    top: '2px',
+                    left: groupSearchEnabled ? '22px' : '2px',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }} />
+                </div>
+                <label htmlFor="toggle-group-search" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
+                  Group search
                 </label>
               </div>
             </div>

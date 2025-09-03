@@ -2,6 +2,7 @@
   "name": "image-builder-comparison-portfolio",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://kel222ea.github.io/july-portfolio",
   "description": "Portfolio project comparing image-builder-frontend and image-builder-UX implementations",
   "repository": {
     "type": "git",
@@ -26,7 +27,9 @@
     "type-check": "tsc --noEmit",
     "prettier": "prettier --write './src/**/*.{js,jsx,ts,tsx,css,scss}'",
     "prettier:check": "prettier --check './src/**/*.{js,jsx,ts,tsx,css,scss}'",
-    "serve:a11y": "serve -s dist -p 9000"
+    "serve:a11y": "serve -s dist -p 9000",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
@@ -42,6 +45,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "file-loader": "^6.2.0",
+    "gh-pages": "^6.3.0",
     "html-webpack-plugin": "^5.6.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
