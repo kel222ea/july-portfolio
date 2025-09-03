@@ -847,7 +847,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         <div style={{ margin: '20px 0', display: 'flex', gap: '16px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
           {groupSearchEnabled && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ fontSize: '14px', fontWeight: '600', color: '#151515', marginBottom: '4px' }}>Package type</div>
+              <div style={{ fontSize: '14px', fontWeight: '600', color: '#151515' }}>Package type</div>
               <select 
                 value={packageTypeFilter} 
                 onChange={(e) => setPackageTypeFilter(e.target.value as 'individual' | 'group')}
