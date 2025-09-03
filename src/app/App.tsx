@@ -15,7 +15,7 @@ const App: React.FunctionComponent = () => {
 
 
   return (
-    <Router basename="/UI-exercise">
+    <Router basename="/ui-exercise">
       <Page>
         <PageGroup>
           <AppRoutes />
