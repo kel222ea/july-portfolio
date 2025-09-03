@@ -239,6 +239,8 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const [enableToggles, setEnableToggles] = React.useState(true);
   const [enableCheckboxes, setEnableCheckboxes] = React.useState(true);
   const [searchInDropdown, setSearchInDropdown] = React.useState(false);
+  const [otherReposEnabled, setOtherReposEnabled] = React.useState(true);
+  const [searchingInOtherRepos, setSearchingInOtherRepos] = React.useState(false);
 
   // Computed values for packages
   const selectedCount = selectedPackages.size;
@@ -271,8 +273,8 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         return nameMatch;
       });
       
-      // Apply toggle filtering
-      if (toggleSelected === 'toggle-selected') {
+      // Apply toggle filtering only if there's no search term
+      if (toggleSelected === 'toggle-selected' && !searchTerm) {
         filtered = filtered.filter(pkg => selectedPackages.has(pkg.name));
         if (!hasViewedPackagesSelected) {
           setHasViewedPackagesSelected(true);
@@ -298,11 +300,24 @@ export const AdditionalPackages: React.FunctionComponent = () => {
       return [];
     }
     
-    return mockRepositories.filter(repo => 
+    // Determine which repositories to search in based on toggle and search state
+    let repositoriesToSearch = mockRepositories;
+    
+    if (!otherReposEnabled && !searchingInOtherRepos) {
+      // When "Other Repos" is OFF and we're not searching in other repos, only search in included repos
+      repositoriesToSearch = mockRepositories.filter(repo => 
+        repo.id === 'repo1' || repo.id === 'repo2' || repo.id === 'repo3'
+      );
+    } else if (otherReposEnabled || searchingInOtherRepos) {
+      // When "Other Repos" is ON or we're searching in other repos, search in all repos
+      repositoriesToSearch = mockRepositories;
+    }
+    
+    return repositoriesToSearch.filter(repo => 
       repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       repo.url.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [searchTerm, searchInDropdown]);
+  }, [searchTerm, searchInDropdown, otherReposEnabled, searchingInOtherRepos]);
 
   // Filter repositories for main table
   const filteredRepositories = React.useMemo(() => {
@@ -336,6 +351,10 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   // Event handlers
   const handleSearch = (value: string) => {
     setSearchTerm(value);
+    // Reset searching in other repos when search term changes
+    if (value !== searchTerm) {
+      setSearchingInOtherRepos(false);
+    }
     setPage(1);
   };
 
@@ -441,6 +460,10 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     
     // Clear search term but stay in current view so user can see the addition in context
     setSearchTerm('');
+  };
+
+  const handleSearchInOtherRepos = () => {
+    setSearchingInOtherRepos(true);
   };
 
   const handleAddPackage = (pkg: Package) => {
@@ -561,47 +584,77 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               overflowY: 'auto',
               zIndex: 1000
             }}>
-              {dropdownFilteredRepositories.slice(0, 5).map((repo) => {
-                const isAlreadySelected = selectedRepositories.has(repo.id);
-                return (
-                  <div
-                    key={repo.id}
-                    onClick={() => !isAlreadySelected && handleAddRepository(repo)}
-                    style={{
-                      padding: '8px 12px',
-                      cursor: isAlreadySelected ? 'not-allowed' : 'pointer',
-                      borderBottom: '1px solid #f0f0f0',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      backgroundColor: isAlreadySelected ? '#f8f9fa' : 'white',
-                      opacity: isAlreadySelected ? 0.6 : 1
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isAlreadySelected) {
-                        e.currentTarget.style.backgroundColor = '#f5f5f5';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isAlreadySelected) {
-                        e.currentTarget.style.backgroundColor = 'white';
-                      }
-                    }}
-                  >
-                    <div>
-                      <strong>{repo.name}</strong>
-                      <br />
-                      <small style={{ color: '#666' }}>{repo.url}</small>
+              {dropdownFilteredRepositories.length > 0 ? (
+                dropdownFilteredRepositories.slice(0, 5).map((repo) => {
+                  const isAlreadySelected = selectedRepositories.has(repo.id);
+                  return (
+                    <div
+                      key={repo.id}
+                      onClick={() => !isAlreadySelected && handleAddRepository(repo)}
+                      style={{
+                        padding: '8px 12px',
+                        cursor: isAlreadySelected ? 'not-allowed' : 'pointer',
+                        borderBottom: '1px solid #f0f0f0',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        backgroundColor: isAlreadySelected ? '#f8f9fa' : 'white',
+                        opacity: isAlreadySelected ? 0.6 : 1
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isAlreadySelected) {
+                          e.currentTarget.style.backgroundColor = '#f5f5f5';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isAlreadySelected) {
+                          e.currentTarget.style.backgroundColor = 'white';
+                        }
+                      }}
+                    >
+                      <div>
+                        <strong>{repo.name}</strong>
+                        <br />
+                        <small style={{ color: '#666' }}>{repo.url}</small>
+                      </div>
+                      <span style={{ 
+                        color: isAlreadySelected ? '#999' : '#0066cc', 
+                        fontSize: '12px' 
+                      }}>
+                        {isAlreadySelected ? '✓ Added' : '+ Add'}
+                      </span>
                     </div>
-                    <span style={{ 
-                      color: isAlreadySelected ? '#999' : '#0066cc', 
-                      fontSize: '12px' 
+                  );
+                })
+              ) : (
+                // Show "Search in Other Repos" button when no results and Other Repos is OFF
+                !otherReposEnabled && !searchingInOtherRepos && (
+                  <div style={{
+                    padding: '12px',
+                    textAlign: 'center',
+                    borderBottom: '1px solid #f0f0f0'
+                  }}>
+                    <div style={{ 
+                      color: '#666', 
+                      fontSize: '14px', 
+                      marginBottom: '8px' 
                     }}>
-                      {isAlreadySelected ? '✓ Added' : '+ Add'}
-                    </span>
+                      No repositories found in included repos
+                    </div>
+                    <Button
+                      variant={ButtonVariant.secondary}
+                      size="sm"
+                      onClick={handleSearchInOtherRepos}
+                      style={{
+                        fontSize: '12px',
+                        padding: '4px 12px'
+                      }}
+                    >
+                      Search in Other Repos
+                    </Button>
                   </div>
-                );
-              })}
+                )
+              )}
             </div>
           )}
         </div>
@@ -777,47 +830,60 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 overflowY: 'auto',
                 zIndex: 1000
               }}>
-                {dropdownFilteredPackages.slice(0, 5).map((pkg) => {
-                  const isAlreadySelected = selectedPackages.has(pkg.name);
-                  return (
-                  <div
-                    key={pkg.name}
-                    onClick={() => !isAlreadySelected && handleAddPackage(pkg)}
-                    style={{
-                      padding: '8px 12px',
-                      cursor: isAlreadySelected ? 'not-allowed' : 'pointer',
-                      borderBottom: '1px solid #f0f0f0',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      backgroundColor: isAlreadySelected ? '#f8f9fa' : 'white',
-                      opacity: isAlreadySelected ? 0.6 : 1
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isAlreadySelected) {
-                        e.currentTarget.style.backgroundColor = '#f5f5f5';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isAlreadySelected) {
-                        e.currentTarget.style.backgroundColor = 'white';
-                      }
-                    }}
-                  >
-                    <div>
-                      <strong>{pkg.name}</strong>
-                      <br />
-                      <small style={{ color: '#666' }}>{pkg.summary}</small>
+                {dropdownFilteredPackages.length > 0 ? (
+                  dropdownFilteredPackages.slice(0, 5).map((pkg) => {
+                    const isAlreadySelected = selectedPackages.has(pkg.name);
+                    return (
+                    <div
+                      key={pkg.name}
+                      onClick={() => !isAlreadySelected && handleAddPackage(pkg)}
+                      style={{
+                        padding: '8px 12px',
+                        cursor: isAlreadySelected ? 'not-allowed' : 'pointer',
+                        borderBottom: '1px solid #f0f0f0',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        backgroundColor: isAlreadySelected ? '#f8f9fa' : 'white',
+                        opacity: isAlreadySelected ? 0.6 : 1
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isAlreadySelected) {
+                          e.currentTarget.style.backgroundColor = '#f5f5f5';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isAlreadySelected) {
+                          e.currentTarget.style.backgroundColor = 'white';
+                        }
+                      }}
+                    >
+                      <div>
+                        <strong>{pkg.name}</strong>
+                        <br />
+                        <small style={{ color: '#666' }}>{pkg.summary}</small>
+                      </div>
+                      <span style={{ 
+                        color: isAlreadySelected ? '#999' : '#0066cc', 
+                        fontSize: '12px' 
+                      }}>
+                        {isAlreadySelected ? '✓ Added' : '+ Add'}
+                      </span>
                     </div>
-                    <span style={{ 
-                      color: isAlreadySelected ? '#999' : '#0066cc', 
-                      fontSize: '12px' 
+                  );
+                })
+                ) : (
+                  !otherReposEnabled && (
+                    <div style={{
+                      padding: '12px',
+                      textAlign: 'center',
+                      color: '#666',
+                      fontSize: '14px'
                     }}>
-                      {isAlreadySelected ? '✓ Added' : '+ Add'}
-                    </span>
-                  </div>
-                );
-              })}
+                      No packages found matching your search.
+                    </div>
+                  )
+                )}
               </div>
             )}
           </div>
@@ -861,25 +927,27 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           </div>
         </div>
 
-        {/* Horizontal Tabs */}
-        <div style={{ marginTop: '20px' }}>
-          <Tabs
-            activeKey={activeTabKey}
-            onSelect={(_event, tabIndex) => setActiveTabKey(tabIndex.toString())}
-            aria-label="Repositories tabs on packages step"
-          >
-            <Tab
-              eventKey="included-repos"
-              title={<TabTitleText>Included repos</TabTitleText>}
-              aria-label="Included repositories"
-            />
-            <Tab
-              eventKey="other-repos"
-              title={<TabTitleText>Other repos</TabTitleText>}
-              aria-label="Other repositories"
-            />
-          </Tabs>
-        </div>
+        {/* Horizontal Tabs - only show when Other Repos toggle is ON */}
+        {otherReposEnabled && (
+          <div style={{ marginTop: '20px' }}>
+            <Tabs
+              activeKey={activeTabKey}
+              onSelect={(_event, tabIndex) => setActiveTabKey(tabIndex.toString())}
+              aria-label="Repositories tabs on packages step"
+            >
+              <Tab
+                eventKey="included-repos"
+                title={<TabTitleText>Included repos</TabTitleText>}
+                aria-label="Included repositories"
+              />
+              <Tab
+                eventKey="other-repos"
+                title={<TabTitleText>Other repos</TabTitleText>}
+                aria-label="Other repositories"
+              />
+            </Tabs>
+          </div>
+        )}
 
         {/* Packages Display using Table */}
         <div style={{ 
@@ -952,9 +1020,11 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               borderRadius: '4px',
               backgroundColor: '#f8f9fa'
           }}>
-              {(toggleSelected as string) === 'toggle-selected' 
-                ? 'No packages selected. Use the search above to find and select packages.'
-                : 'Search for packages to see results here.'
+              {searchTerm 
+                ? 'No packages found matching your search.'
+                : (toggleSelected as string) === 'toggle-selected' 
+                  ? 'No packages selected. Use the search above to find and select packages.'
+                  : 'Search for packages to see results here.'
               }
           </div>
         )}
@@ -1013,7 +1083,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           }}>
                         {/* Feature Toggles */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-              {/* Layout Control */}
+              {/* Combine Steps Toggle */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div 
                   style={{
@@ -1044,33 +1114,19 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 </label>
               </div>
 
-              {/* Interaction Controls Group */}
-              <div style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '16px',
-                padding: '16px',
-                backgroundColor: '#f8f9fa',
-                border: '1px solid #d1d1d1',
-                borderRadius: '8px',
-                alignItems: 'center'
-              }}>
-                <div style={{ fontSize: '12px', fontWeight: '600', color: '#666', marginBottom: '8px', width: '100%' }}>
-                  Selection Handling
-            </div>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div
-                    style={{
-                      width: '44px',
-                      height: '24px',
-                      backgroundColor: enableToggles ? '#0066cc' : '#ccc',
-                      borderRadius: '12px',
-                      position: 'relative',
-                      cursor: 'pointer',
-                      transition: 'background-color 0.2s ease'
-                    }}
-                    onClick={() => {
+              {/* Enable Toggles Toggle */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '24px',
+                    backgroundColor: enableToggles ? '#0066cc' : '#ccc',
+                    borderRadius: '12px',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onClick={() => {
                     // Toggle between default state (all ON except search) and non-default (all OFF except search)
                     const isDefaultState = enableToggles === true && enableCheckboxes === true && searchInDropdown === false;
                     if (isDefaultState) {
@@ -1085,112 +1141,150 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       setSearchInDropdown(false);
                     }
                   }}
-                  >
-                    <div style={{
-                      width: '20px',
-                      height: '20px',
-                      backgroundColor: 'white',
-                      borderRadius: '50%',
-                      position: 'absolute',
-                      top: '2px',
-                      left: enableToggles ? '22px' : '2px',
-                      transition: 'left 0.2s ease',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                    }} />
-                  </div>
-                  <label htmlFor="toggle-toggles" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
-                    Enable toggles
-                  </label>
-          </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div
-                    style={{
-                      width: '44px',
-                      height: '24px',
-                      backgroundColor: enableCheckboxes ? '#0066cc' : '#ccc',
-                      borderRadius: '12px',
-                      position: 'relative',
-                      cursor: 'pointer',
-                      transition: 'background-color 0.2s ease'
-                    }}
-                    onClick={() => {
-                      // Toggle between default state and non-default
-                      const isDefaultState = enableToggles === true && enableCheckboxes === true && searchInDropdown === false;
-                      if (isDefaultState) {
-                        // Go to non-default
-                        setEnableToggles(false);
-                        setEnableCheckboxes(false);
-                        setSearchInDropdown(true);
-                      } else {
-                        // Return to default
-                        setEnableToggles(true);
-                        setEnableCheckboxes(true);
-                        setSearchInDropdown(false);
-                      }
-                    }}
-                  >
-                    <div style={{
-                      width: '20px',
-                      height: '20px',
-                      backgroundColor: 'white',
-                      borderRadius: '50%',
-                      position: 'absolute',
-                      top: '2px',
-                      left: enableCheckboxes ? '22px' : '2px',
-                      transition: 'left 0.2s ease',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                    }} />
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: 'white',
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    top: '2px',
+                    left: enableToggles ? '22px' : '2px',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }} />
                 </div>
-                  <label htmlFor="toggle-checkboxes" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
-                    Checkbox Adders
-                  </label>
+                <label htmlFor="toggle-toggles" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
+                  Enable toggles
+                </label>
               </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div
-                    style={{
-                      width: '44px',
-                      height: '24px',
-                      backgroundColor: searchInDropdown ? '#0066cc' : '#ccc',
-                      borderRadius: '12px',
-                      position: 'relative',
-                      cursor: 'pointer',
-                      transition: 'background-color 0.2s ease'
-                    }}
-                    onClick={() => {
-                      // Toggle between default state and non-default
-                      const isDefaultState = enableToggles === true && enableCheckboxes === true && searchInDropdown === false;
-                      if (isDefaultState) {
-                        // Go to non-default
-                        setEnableToggles(false);
-                        setEnableCheckboxes(false);
-                        setSearchInDropdown(true);
-                      } else {
-                        // Return to default
-                        setEnableToggles(true);
-                        setEnableCheckboxes(true);
-                        setSearchInDropdown(false);
-                      }
-                    }}
-                  >
-                    <div style={{
-                      width: '20px',
-                      height: '20px',
-                      backgroundColor: 'white',
-                      borderRadius: '50%',
-                      position: 'absolute',
-                      top: '2px',
-                      left: searchInDropdown ? '22px' : '2px',
-                      transition: 'left 0.2s ease',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                    }} />
+              {/* Checkbox Adders Toggle */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '24px',
+                    backgroundColor: enableCheckboxes ? '#0066cc' : '#ccc',
+                    borderRadius: '12px',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onClick={() => {
+                    // Toggle between default state and non-default
+                    const isDefaultState = enableToggles === true && enableCheckboxes === true && searchInDropdown === false;
+                    if (isDefaultState) {
+                      // Go to non-default
+                      setEnableToggles(false);
+                      setEnableCheckboxes(false);
+                      setSearchInDropdown(true);
+                    } else {
+                      // Return to default
+                      setEnableToggles(true);
+                      setEnableCheckboxes(true);
+                      setSearchInDropdown(false);
+                    }
+                  }}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: 'white',
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    top: '2px',
+                    left: enableCheckboxes ? '22px' : '2px',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }} />
                 </div>
-                  <label htmlFor="toggle-dropdown" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
-                    Search in Dropdown
-                  </label>
+                <label htmlFor="toggle-checkboxes" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
+                  Checkbox Adders
+                </label>
               </div>
-        </div>
+
+              {/* Search in Dropdown Toggle */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '24px',
+                    backgroundColor: searchInDropdown ? '#0066cc' : '#ccc',
+                    borderRadius: '12px',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onClick={() => {
+                    // Toggle between default state and non-default
+                    const isDefaultState = enableToggles === true && enableCheckboxes === true && searchInDropdown === false;
+                    if (isDefaultState) {
+                      // Go to non-default
+                      setEnableToggles(false);
+                      setEnableCheckboxes(false);
+                      setSearchInDropdown(true);
+                    } else {
+                      // Return to default
+                      setEnableToggles(true);
+                      setEnableCheckboxes(true);
+                      setSearchInDropdown(false);
+                    }
+                  }}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: 'white',
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    top: '2px',
+                    left: searchInDropdown ? '22px' : '2px',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }} />
+                </div>
+                <label htmlFor="toggle-dropdown" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
+                  Search in Dropdown
+                </label>
+              </div>
+
+              {/* Other Repos Toggle */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '24px',
+                    backgroundColor: otherReposEnabled ? '#0066cc' : '#ccc',
+                    borderRadius: '12px',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onClick={() => {
+                    setOtherReposEnabled(!otherReposEnabled);
+                    // Reset searching in other repos when toggle is turned on
+                    if (!otherReposEnabled) {
+                      setSearchingInOtherRepos(false);
+                    }
+                  }}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: 'white',
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    top: '2px',
+                    left: otherReposEnabled ? '22px' : '2px',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }} />
+                </div>
+                <label htmlFor="toggle-other-repos" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
+                  Other Repos
+                </label>
+              </div>
             </div>
           </div>
 
