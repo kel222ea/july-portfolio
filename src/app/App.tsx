@@ -15,7 +15,7 @@ const App: React.FunctionComponent = () => {
 
 
   return (
-    <Router>
+    <Router basename="/july-portfolio">
       <Page>
         <PageGroup>
           <AppRoutes />
