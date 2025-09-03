@@ -9,7 +9,7 @@ module.exports = merge(common, {
   mode: 'production',
   devtool: 'source-map',
   output: {
-    publicPath: '/july-portfolio/',
+    publicPath: '/ui-exercise/',
     filename: '[name].[contenthash].js',
   },
   module: {
@@ -27,7 +27,7 @@ module.exports = merge(common, {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html'),
-      publicPath: '/july-portfolio/',
+      publicPath: '/ui-exercise/',
     }),
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
