@@ -16,7 +16,8 @@ import {
   Tab,
   TabTitleText,
   Alert,
-  AlertVariant
+  AlertVariant,
+  Spinner
 } from '@patternfly/react-core';
 import {
   Table,
@@ -241,6 +242,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const [searchInDropdown, setSearchInDropdown] = React.useState(false);
   const [otherReposEnabled, setOtherReposEnabled] = React.useState(true);
   const [searchingInOtherRepos, setSearchingInOtherRepos] = React.useState(false);
+  const [isLoadingOtherRepos, setIsLoadingOtherRepos] = React.useState(false);
 
   // Computed values for packages
   const selectedCount = selectedPackages.size;
@@ -248,19 +250,45 @@ export const AdditionalPackages: React.FunctionComponent = () => {
 
   // Filter packages for dropdown (only when searchInDropdown is enabled)
   const dropdownFilteredPackages = React.useMemo(() => {
-    if (!searchInDropdown || !searchTerm) {
+    if ((!searchInDropdown && !searchingInOtherRepos) || !searchTerm) {
       return [];
     }
     
-    const sourcePackages = activeTabKey === 'included-repos' ? includedRepoPackages : otherRepoPackages;
+    // When searching in other repos, search in both included and other repo packages
+    let sourcePackages;
+    if (searchingInOtherRepos) {
+      sourcePackages = [...includedRepoPackages, ...otherRepoPackages];
+    } else {
+      sourcePackages = activeTabKey === 'included-repos' ? includedRepoPackages : otherRepoPackages;
+    }
+    
     return sourcePackages.filter(pkg => {
-      const nameMatch = pkg.name.toLowerCase().startsWith(searchTerm.toLowerCase());
-      return nameMatch;
+      if (searchingInOtherRepos) {
+        // For demo purposes, show exact match when searching in other repos
+        return pkg.name.toLowerCase() === searchTerm.toLowerCase();
+      } else {
+        const nameMatch = pkg.name.toLowerCase().startsWith(searchTerm.toLowerCase());
+        return nameMatch;
+      }
     });
-  }, [searchTerm, activeTabKey, searchInDropdown]);
+  }, [searchTerm, activeTabKey, searchInDropdown, searchingInOtherRepos]);
 
   // Filter packages for main table
   const filteredPackages = React.useMemo(() => {
+    // When searching in other repos, show selected packages from both repositories
+    if (searchingInOtherRepos) {
+      const allPackages = [...includedRepoPackages, ...otherRepoPackages];
+      const selectedPkgs = allPackages.filter(pkg => selectedPackages.has(pkg.name));
+      // Sort to show packages from other repos first (newly added ones)
+      return selectedPkgs.sort((a, b) => {
+        const aIsOther = a.repository === 'other';
+        const bIsOther = b.repository === 'other';
+        if (aIsOther && !bIsOther) return -1;
+        if (!aIsOther && bIsOther) return 1;
+        return 0;
+      });
+    }
+    
     const sourcePackages = activeTabKey === 'included-repos' ? includedRepoPackages : otherRepoPackages;
     
     // When searchInDropdown is enabled, only show selected packages
@@ -283,7 +311,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
       
       return filtered;
     }
-  }, [searchTerm, activeTabKey, searchInDropdown, toggleSelected, selectedPackages, hasViewedPackagesSelected]);
+  }, [searchTerm, activeTabKey, searchInDropdown, toggleSelected, selectedPackages, hasViewedPackagesSelected, searchingInOtherRepos]);
 
   // Paginate packages
   const paginatedPackages = React.useMemo(() => {
@@ -463,7 +491,12 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   };
 
   const handleSearchInOtherRepos = () => {
-    setSearchingInOtherRepos(true);
+    setIsLoadingOtherRepos(true);
+    // Simulate loading delay for demo purposes
+    setTimeout(() => {
+      setSearchingInOtherRepos(true);
+      setIsLoadingOtherRepos(false);
+    }, 1500);
   };
 
   const handleAddPackage = (pkg: Package) => {
@@ -816,12 +849,13 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               onClear={handleClear}
               aria-label="Search packages"
             />
-            {searchInDropdown && searchTerm && (
+            {(searchInDropdown || searchingInOtherRepos) && searchTerm && (
               <div style={{
                 position: 'absolute',
                 top: '100%',
                 left: 0,
                 right: 0,
+                minWidth: '400px',
                 backgroundColor: 'white',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
@@ -877,10 +911,23 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                     <div style={{
                       padding: '12px',
                       textAlign: 'center',
-                      color: '#666',
-                      fontSize: '14px'
+                      borderBottom: '1px solid #f0f0f0'
                     }}>
-                      No packages found matching your search.
+                      <div style={{ 
+                        color: '#666', 
+                        fontSize: '14px', 
+                        marginBottom: '8px' 
+                      }}>
+                        No packages found matching your search.
+                      </div>
+                      <Button
+                        variant={ButtonVariant.secondary}
+                        onClick={handleSearchInOtherRepos}
+                        isDisabled={isLoadingOtherRepos}
+                        icon={isLoadingOtherRepos ? <Spinner size="sm" /> : undefined}
+                      >
+                        {isLoadingOtherRepos ? 'Searching...' : 'Search in Other Repos'}
+                      </Button>
                     </div>
                   )
                 )}
@@ -955,7 +1002,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           display: 'flex',
           flexDirection: 'column'
         }}>
-          {(searchInDropdown && selectedPackages.size > 0) || (!searchInDropdown && (searchTerm || toggleSelected === 'toggle-selected')) ? (
+          {(searchInDropdown && selectedPackages.size > 0) || (searchingInOtherRepos && selectedPackages.size > 0) || (!searchInDropdown && !searchingInOtherRepos && (searchTerm || toggleSelected === 'toggle-selected')) ? (
           <Table aria-label="Packages table" variant="compact">
             <Thead>
               <Tr>
