@@ -87,7 +87,7 @@ const includedRepoPackages: Package[] = [
   { name: 'dnsmasq', summary: 'Lightweight DNS forwarder', repository: 'included', source: 'Third Party Repository' },
   { name: 'dovecot', summary: 'IMAP and POP3 server', repository: 'included', source: 'Third Party Repository' },
   { name: 'fail2ban', summary: 'Intrusion prevention software', repository: 'included', source: 'Third Party Repository' },
-  { name: 'firewalld', summary: 'Selected Package', repository: 'included', source: 'Red Hat Repository' },
+  { name: 'Selected Package 1', summary: 'Selected Package', repository: 'included', source: 'Red Hat Repository' },
   { name: 'freeradius', summary: 'RADIUS server', repository: 'included', source: 'Third Party Repository' },
   { name: 'gcc', summary: 'GNU Compiler Collection', repository: 'included', source: 'Red Hat Repository' },
   { name: 'glibc', summary: 'GNU C Library', repository: 'included', source: 'Red Hat Repository' },
@@ -103,15 +103,15 @@ const includedRepoPackages: Package[] = [
   { name: 'memcached', summary: 'Memory caching daemon', repository: 'included', source: 'Third Party Repository' },
   { name: 'nagios', summary: 'Network monitoring system', repository: 'included', source: 'Third Party Repository' },
   { name: 'netcat', summary: 'Network utility', repository: 'included', source: 'Red Hat Repository' },
-  { name: 'openssh', summary: 'Selected Package', repository: 'included', source: 'Red Hat Repository' },
+  { name: 'Selected Package 2', summary: 'Selected Package', repository: 'included', source: 'Red Hat Repository' },
   { name: 'openvpn', summary: 'VPN solution', repository: 'included', source: 'Third Party Repository' },
   { name: 'php', summary: 'PHP scripting language', repository: 'included', source: 'Third Party Repository' },
   { name: 'podman', summary: 'Container engine', repository: 'included', source: 'Red Hat Repository' },
   { name: 'qemu', summary: 'Machine emulator and virtualizer', repository: 'included', source: 'Red Hat Repository' },
   { name: 'redis', summary: 'In-memory data structure store', repository: 'included', source: 'Third Party Repository' },
-  { name: 'rsyslog', summary: 'Selected Package', repository: 'included', source: 'Red Hat Repository' },
+  { name: 'Selected Package 3', summary: 'Selected Package', repository: 'included', source: 'Red Hat Repository' },
   { name: 'rpm', summary: 'RPM Package Manager', repository: 'included', source: 'Red Hat Repository' },
-  { name: 'selinux', summary: 'Selected Package', repository: 'included', source: 'Red Hat Repository' },
+  { name: 'Selected Package 4', summary: 'Selected Package', repository: 'included', source: 'Red Hat Repository' },
   { name: 'tcpdump', summary: 'Network packet analyzer', repository: 'included', source: 'Red Hat Repository' },
   { name: 'tmux', summary: 'Terminal multiplexer', repository: 'included', source: 'Third Party Repository' },
   { name: 'unzip', summary: 'Extract files from ZIP archives', repository: 'included', source: 'Red Hat Repository' },
@@ -239,7 +239,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const [toggleSelected, setToggleSelected] = React.useState<'toggle-available' | 'toggle-selected'>('toggle-available');
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(10);
-  const [selectedPackages, setSelectedPackages] = React.useState<Set<string>>(new Set(['openssh', 'firewalld', 'selinux', 'rsyslog']));
+  const [selectedPackages, setSelectedPackages] = React.useState<Set<string>>(new Set(['Selected Package 1', 'Selected Package 2', 'Selected Package 3', 'Selected Package 4']));
   const [activeTabKey, setActiveTabKey] = React.useState('included-repos');
   const [hasViewedSelected, setHasViewedSelected] = React.useState(false);
   const [hasViewedPackagesSelected, setHasViewedPackagesSelected] = React.useState(false);
