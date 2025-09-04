@@ -1375,19 +1375,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                     transition: 'background-color 0.2s ease'
                   }}
                   onClick={() => {
-                    // Toggle between default state (all ON except search) and non-default (all OFF except search)
-                    const isDefaultState = enableToggles === true && enableCheckboxes === true && searchInDropdown === false;
-                    if (isDefaultState) {
-                      // Go to non-default: all OFF
-                      setEnableToggles(false);
-                      setEnableCheckboxes(false);
-                      setSearchInDropdown(true);
-                    } else {
-                      // Return to default: enableToggles=ON, enableCheckboxes=ON, searchInDropdown=OFF
-                      setEnableToggles(true);
-                      setEnableCheckboxes(true);
-                      setSearchInDropdown(false);
-                    }
+                    setEnableToggles(!enableToggles);
                   }}
                 >
                   <div style={{
@@ -1420,19 +1408,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                     transition: 'background-color 0.2s ease'
                   }}
                   onClick={() => {
-                    // Toggle between default state and non-default
-                    const isDefaultState = enableToggles === true && enableCheckboxes === true && searchInDropdown === false;
-                    if (isDefaultState) {
-                      // Go to non-default
-                      setEnableToggles(false);
-                      setEnableCheckboxes(false);
-                      setSearchInDropdown(true);
-                    } else {
-                      // Return to default
-                      setEnableToggles(true);
-                      setEnableCheckboxes(true);
-                      setSearchInDropdown(false);
-                    }
+                    setEnableCheckboxes(!enableCheckboxes);
                   }}
                 >
                   <div style={{
@@ -1465,19 +1441,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                     transition: 'background-color 0.2s ease'
                   }}
                   onClick={() => {
-                    // Toggle between default state and non-default
-                    const isDefaultState = enableToggles === true && enableCheckboxes === true && searchInDropdown === false;
-                    if (isDefaultState) {
-                      // Go to non-default
-                      setEnableToggles(false);
-                      setEnableCheckboxes(false);
-                      setSearchInDropdown(true);
-                    } else {
-                      // Return to default
-                      setEnableToggles(true);
-                      setEnableCheckboxes(true);
-                      setSearchInDropdown(false);
-                    }
+                    setSearchInDropdown(!searchInDropdown);
                   }}
                 >
                   <div style={{
