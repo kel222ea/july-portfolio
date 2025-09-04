@@ -1319,7 +1319,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
         maxWidth: '90vw',
         maxHeight: '90vh',
-        width: '1200px',
+        width: '1400px',
         height: '800px',
         overflow: 'auto',
         display: 'flex',
