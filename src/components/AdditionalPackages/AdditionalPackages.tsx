@@ -1275,19 +1275,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       <Td>{pkg.source}</Td>
                       <Td>{pkg.summary}</Td>
                       <Td>
-                        <Button
-                          variant="plain"
-                          aria-label="Add recommended package"
-                          onClick={() => handleAddPackage(pkg)}
-                          style={{ 
-                            padding: '4px', 
-                            minWidth: 'auto',
-                            color: '#0066cc',
-                            fontSize: '12px'
-                          }}
-                        >
-                          Add+
-                        </Button>
+                        {/* Add functionality removed - not part of design system */}
                       </Td>
                     </Tr>
                   ))}
