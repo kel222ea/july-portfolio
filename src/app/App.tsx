@@ -15,7 +15,7 @@ const App: React.FunctionComponent = () => {
 
 
   return (
-    <Router basename="/ui-exercise">
+    <Router basename={process.env.NODE_ENV === 'production' ? '/ui-exercise' : ''}>
       <Page>
         <PageGroup>
           <AppRoutes />

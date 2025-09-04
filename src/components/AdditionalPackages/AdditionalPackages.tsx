@@ -17,7 +17,10 @@ import {
   TabTitleText,
   Alert,
   AlertVariant,
-  Spinner
+  Spinner,
+  FormGroup,
+  FormSelect,
+  FormSelectOption
 } from '@patternfly/react-core';
 import {
   Table,
@@ -27,7 +30,7 @@ import {
   Th,
   Td,
 } from '@patternfly/react-table';
-import { RepositoryIcon, PackageIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { RepositoryIcon, PackageIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 // Mock data types
 interface Package {
@@ -205,6 +208,18 @@ const otherRepoPackages: Package[] = [
   { name: 'pkgtool', summary: 'Package manager', repository: 'other', source: 'Third Party Repository' },
 ];
 
+// Package recommendations data - full pool of recommendations
+const allPackageRecommendations: Package[] = [
+  { name: 'htop', summary: 'Interactive process viewer', repository: 'recommended', source: 'Red Hat Repository' },
+  { name: 'tree', summary: 'Display directory structure as a tree', repository: 'recommended', source: 'Red Hat Repository' },
+  { name: 'jq', summary: 'Command-line JSON processor', repository: 'recommended', source: 'Red Hat Repository' },
+  { name: 'vim', summary: 'Vi IMproved text editor', repository: 'recommended', source: 'Red Hat Repository' },
+  { name: 'git', summary: 'Version control system', repository: 'recommended', source: 'Red Hat Repository' },
+  { name: 'curl', summary: 'Transfer data from or to a server', repository: 'recommended', source: 'Red Hat Repository' },
+  { name: 'wget', summary: 'Retrieve files from the web', repository: 'recommended', source: 'Red Hat Repository' },
+  { name: 'unzip', summary: 'Extract files from ZIP archives', repository: 'recommended', source: 'Red Hat Repository' }
+];
+
 const mockRepositories: Repository[] = [
   { id: 'repo1', name: 'EPEL Repository', url: 'https://dl.fedoraproject.org/pub/epel/', arch: 'x86_64', version: '8', packages: 15000, status: 'Active' },
   { id: 'repo2', name: 'RPM Fusion', url: 'https://rpmfusion.org/', arch: 'x86_64', version: '8', packages: 8000, status: 'Active' },
@@ -245,10 +260,27 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const [isLoadingOtherRepos, setIsLoadingOtherRepos] = React.useState(false);
   const [groupSearchEnabled, setGroupSearchEnabled] = React.useState(false);
   const [packageTypeFilter, setPackageTypeFilter] = React.useState<'individual' | 'group'>('individual');
+  const [addedRecommendations, setAddedRecommendations] = React.useState<Set<string>>(new Set());
+  const [showRecommendations, setShowRecommendations] = React.useState(true);
+  const [showSearchRecommendations, setShowSearchRecommendations] = React.useState(false);
 
   // Computed values for packages
   const selectedCount = selectedPackages.size;
   const totalAvailableItems = includedRepoPackages.length + otherRepoPackages.length;
+
+  // Current recommendations (excluding already added ones)
+  const currentRecommendations = React.useMemo(() => {
+    return allPackageRecommendations
+      .filter(pkg => !addedRecommendations.has(pkg.name))
+      .slice(0, 3); // Show only 3 recommendations at a time
+  }, [addedRecommendations]);
+
+  // Search recommendations (shown when starting a search and Package Recommendations toggle is OFF)
+  const searchRecommendations = React.useMemo(() => {
+    return allPackageRecommendations
+      .filter(pkg => !addedRecommendations.has(pkg.name))
+      .slice(0, 3); // Show only 3 recommendations at a time
+  }, [addedRecommendations]);
 
   // Filter packages for dropdown (only when searchInDropdown is enabled)
   const dropdownFilteredPackages = React.useMemo(() => {
@@ -384,14 +416,31 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     // Reset searching in other repos when search term changes
     if (value !== searchTerm) {
       setSearchingInOtherRepos(false);
+      
+      // Hide search recommendations when user starts typing
+      if (value) {
+        setShowSearchRecommendations(false);
+      }
+      // Show search recommendations when clearing search (if Package Recommendations toggle is OFF)
+      else if (!value && !showRecommendations) {
+        setShowSearchRecommendations(true);
+      }
     }
     setPage(1);
   };
 
   const handleClear = () => {
     setSearchTerm('');
+    setShowSearchRecommendations(false);
     setPage(1);
     // Note: selected packages should persist
+  };
+
+  const handleSearchFocus = () => {
+    // Show search recommendations when focusing the search field (if Package Recommendations toggle is OFF)
+    if (!showRecommendations) {
+      setShowSearchRecommendations(true);
+    }
   };
 
   const handleToggleChange = (event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>, selected: boolean) => {
@@ -507,6 +556,21 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     newSelected.add(pkg.name);
     setSelectedPackages(newSelected);
     
+    // Track that this recommendation was added
+    const newAddedRecommendations = new Set(addedRecommendations);
+    newAddedRecommendations.add(pkg.name);
+    setAddedRecommendations(newAddedRecommendations);
+    
+    // Add to included repo packages if not already there
+    if (!includedRepoPackages.some(existingPkg => existingPkg.name === pkg.name)) {
+      // Convert recommended package to included package format
+      const includedPackage: Package = {
+        ...pkg,
+        repository: 'included' as const
+      };
+      includedRepoPackages.unshift(includedPackage); // Add to beginning of array
+    }
+    
     // Clear search term but stay in current view so user can see the addition in context
     setSearchTerm('');
   };
@@ -597,15 +661,22 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         flexWrap: 'wrap',
         padding: '16px'
       }}>
-        <div style={{ width: '300px', position: 'relative' }}>
-          <SearchInput
-            placeholder={searchInDropdown ? "Search repositories (dropdown enabled)" : "Search repositories (enable dropdown toggle above)"}
-            value={searchTerm}
-            onChange={(event, value) => handleSearch(value)}
-            onClear={handleClear}
-            aria-label="Filter repositories"
-          />
-          {searchInDropdown && searchTerm && (
+        <div style={{ position: 'relative' }}>
+          <FormGroup 
+            label={<span style={{ fontSize: '14px', fontWeight: 600 }}>Search repositories</span>} 
+            fieldId="repository-search"
+          >
+            <div style={{ width: '300px' }}>
+              <SearchInput
+                placeholder="Search repositories..."
+                value={searchTerm}
+                onChange={(event, value) => handleSearch(value)}
+                onClear={handleClear}
+                aria-label="Filter repositories"
+              />
+            </div>
+          </FormGroup>
+                      {(searchInDropdown && searchTerm) || (showSearchRecommendations && !showRecommendations) && (
             <div style={{
               position: 'absolute',
               top: '100%',
@@ -694,9 +765,11 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           )}
         </div>
         
-        <Button variant={ButtonVariant.primary}>
-          Refresh
-        </Button>
+        {enableToggles && (
+          <Button variant={ButtonVariant.primary}>
+            Refresh
+          </Button>
+        )}
 
 
 
@@ -746,7 +819,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
             <Th width={10}>Packages</Th>
             <Th>Status</Th>
             {!enableCheckboxes && (
-              <Th width={10}>Actions</Th>
+              <Th width={15}>Actions</Th>
             )}
           </Tr>
         </Thead>
@@ -844,35 +917,41 @@ export const AdditionalPackages: React.FunctionComponent = () => {
 
 
         {/* Search and Controls */}
-        <div style={{ margin: '20px 0', display: 'flex', gap: '16px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+        <div style={{ marginTop: '20px', marginBottom: '10px', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
           {groupSearchEnabled && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ fontSize: '14px', fontWeight: '600', color: '#151515' }}>Package type</div>
-              <select 
-                value={packageTypeFilter} 
-                onChange={(e) => setPackageTypeFilter(e.target.value as 'individual' | 'group')}
-                style={{ 
-                  padding: '8px 12px', 
-                  border: '1px solid #ccc', 
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  minWidth: '140px'
-                }}
-              >
-                <option value="individual">Individual package</option>
-                <option value="group">Package group</option>
-              </select>
-            </div>
+            <FormGroup 
+              label={<span style={{ fontSize: '14px', fontWeight: 600 }}>Package type</span>} 
+              fieldId="package-type-select"
+            >
+              <div style={{ width: '200px' }}>
+                <FormSelect
+                  value={packageTypeFilter}
+                  onChange={(event, value) => setPackageTypeFilter(value as 'individual' | 'group')}
+                  aria-label="Package type"
+                >
+                  <FormSelectOption value="individual" label="Individual package" />
+                  <FormSelectOption value="group" label="Package group" />
+                </FormSelect>
+              </div>
+            </FormGroup>
           )}
-          <div style={{ width: '300px', position: 'relative' }}>
-            <SearchInput
-              placeholder={searchInDropdown ? "Search packages (dropdown enabled)" : "Search packages (enable dropdown toggle above)"}
-              value={searchTerm}
-              onChange={(event, value) => handleSearch(value)}
-              onClear={handleClear}
-              aria-label="Search packages"
-            />
-            {(searchInDropdown || searchingInOtherRepos) && searchTerm && (
+          <div style={{ position: 'relative' }}>
+            <FormGroup 
+              label={<span style={{ fontSize: '14px', fontWeight: 600 }}>Search packages</span>} 
+              fieldId="package-search"
+            >
+              <div style={{ width: '300px' }}>
+                <SearchInput
+                  placeholder="Search packages..."
+                  value={searchTerm}
+                  onChange={(event, value) => handleSearch(value)}
+                  onClear={handleClear}
+                  onFocus={handleSearchFocus}
+                  aria-label="Search packages"
+                />
+              </div>
+            </FormGroup>
+            {((searchInDropdown || searchingInOtherRepos) && searchTerm) || (showSearchRecommendations && !showRecommendations) && (
               <div style={{
                 position: 'absolute',
                 top: '100%',
@@ -887,7 +966,76 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 overflowY: 'auto',
                 zIndex: 1000
               }}>
-                {dropdownFilteredPackages.length > 0 ? (
+                {showSearchRecommendations ? (
+                  // Show search recommendations when Package Recommendations toggle is OFF
+                  <div style={{ padding: '8px 0' }}>
+                    <div style={{ 
+                      padding: '8px 12px', 
+                      fontSize: '12px', 
+                      color: '#666',
+                      borderBottom: '1px solid #f0f0f0',
+                      backgroundColor: '#f8f9fa'
+                    }}>
+                      Suggested based on your selections • Enabled by RHEL Lightspeed
+                    </div>
+                    {searchRecommendations.map((pkg) => {
+                      const isAlreadySelected = selectedPackages.has(pkg.name);
+                      return (
+                        <div
+                          key={pkg.name}
+                          onClick={() => !isAlreadySelected && handleAddPackage(pkg)}
+                          style={{
+                            padding: '12px 16px',
+                            cursor: isAlreadySelected ? 'not-allowed' : 'pointer',
+                            borderBottom: '1px solid #f0f0f0',
+                            display: 'flex',
+                            alignItems: 'center',
+                            backgroundColor: isAlreadySelected ? '#f8f9fa' : 'white',
+                            opacity: isAlreadySelected ? 0.6 : 1
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!isAlreadySelected) {
+                              e.currentTarget.style.backgroundColor = '#f5f5f5';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isAlreadySelected) {
+                              e.currentTarget.style.backgroundColor = 'white';
+                            }
+                          }}
+                        >
+                          <div style={{ 
+                            width: '16px', 
+                            height: '16px', 
+                            marginRight: '12px',
+                            background: 'linear-gradient(135deg, #0066cc 0%, #4d9eff 100%)',
+                            borderRadius: '3px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'white',
+                            fontSize: '10px',
+                            fontWeight: 'bold'
+                          }}>
+                            ✨
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontWeight: '600', marginBottom: '2px' }}>
+                              {pkg.name} - {pkg.summary}
+                            </div>
+                          </div>
+                          <span style={{ 
+                            color: isAlreadySelected ? '#999' : '#0066cc', 
+                            fontSize: '12px',
+                            fontWeight: '500'
+                          }}>
+                            {isAlreadySelected ? '✓ Added' : '+ Add'}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : dropdownFilteredPackages.length > 0 ? (
                   dropdownFilteredPackages.slice(0, 5).map((pkg) => {
                     const isAlreadySelected = selectedPackages.has(pkg.name);
                     return (
@@ -957,7 +1105,6 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               </div>
             )}
           </div>
-          
 
           
           {enableToggles && !searchInDropdown && (
@@ -1007,11 +1154,6 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         )}
 
         {/* Packages Display using Table */}
-        <div style={{ 
-          minHeight: showAsOneStep ? '400px' : 'auto',
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
           {(searchInDropdown && selectedPackages.size > 0) || (searchingInOtherRepos && selectedPackages.size > 0) || (!searchInDropdown && !searchingInOtherRepos && (searchTerm || toggleSelected === 'toggle-selected')) ? (
           <Table aria-label="Packages table" variant="compact">
             <Thead>
@@ -1023,7 +1165,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                   <Th>Source</Th>
                   <Th>Summary</Th>
                   {!enableCheckboxes && (
-                    <Th width={10}>Actions</Th>
+                    <Th width={15}>Actions</Th>
                   )}
               </Tr>
             </Thead>
@@ -1085,11 +1227,10 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               }
           </div>
         )}
-        </div>
 
         {/* Pagination */}
         {totalItems > perPage && (
-          <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
         <Pagination
           itemCount={totalItems}
           perPage={perPage}
@@ -1098,6 +1239,55 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           onPerPageSelect={onPerPageSelect}
           variant={PaginationVariant.bottom}
         />
+          </div>
+        )}
+
+        {/* Package Recommendations */}
+        {showRecommendations && (
+          <div style={{ marginTop: '20px' }}>
+            <Title headingLevel="h3" size="lg" style={{ marginBottom: '16px', color: '#151515' }}>
+              Recommended Packages
+            </Title>
+            <div style={{ 
+              border: '1px solid #d1d1d1', 
+              borderRadius: '4px',
+              overflow: 'hidden'
+            }}>
+              <Table variant="compact">
+                <Thead>
+                  <Tr>
+                    <Th width={30}>Package name</Th>
+                    <Th width={20}>Source</Th>
+                    <Th width={40}>Summary</Th>
+                    <Th width={10}>Actions</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {currentRecommendations.map((pkg) => (
+                    <Tr key={pkg.name}>
+                      <Td>{pkg.name}</Td>
+                      <Td>{pkg.source}</Td>
+                      <Td>{pkg.summary}</Td>
+                      <Td>
+                        <Button
+                          variant="plain"
+                          aria-label="Add recommended package"
+                          onClick={() => handleAddPackage(pkg)}
+                          style={{ 
+                            padding: '4px', 
+                            minWidth: 'auto',
+                            color: '#0066cc',
+                            fontSize: '12px'
+                          }}
+                        >
+                          Add+
+                        </Button>
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </div>
           </div>
         )}
       </div>
@@ -1373,6 +1563,37 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                   Group search
                 </label>
               </div>
+
+              {/* Package Recommendations Toggle */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '24px',
+                    backgroundColor: showRecommendations ? '#0066cc' : '#ccc',
+                    borderRadius: '12px',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onClick={() => setShowRecommendations(!showRecommendations)}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: 'white',
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    top: '2px',
+                    left: showRecommendations ? '22px' : '2px',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }} />
+                </div>
+                <label htmlFor="toggle-recommendations" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>
+                  Package Recommendations
+                </label>
+              </div>
             </div>
           </div>
 
@@ -1435,7 +1656,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                     <span style={{ 
                       fontWeight: activeStep === 'custom-repositories' ? '600' : '400'
                     }}>
-                      Step 1: Custom Repositories
+                      Custom Repositories
                     </span>
                   </div>
                 </NavItem>
@@ -1456,7 +1677,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                     <span style={{ 
                       fontWeight: activeStep === 'additional-packages' ? '600' : '400'
                     }}>
-                      Step 2: Additional Packages
+                      Additional Packages
                     </span>
                   </div>
                 </NavItem>
