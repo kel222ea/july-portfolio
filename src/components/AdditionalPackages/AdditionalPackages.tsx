@@ -245,7 +245,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   const [hasViewedPackagesSelected, setHasViewedPackagesSelected] = React.useState(false);
 
   // State for repositories
-  const [selectedRepositories, setSelectedRepositories] = React.useState<Set<string>>(new Set(['repo1', 'repo3']));
+  const [selectedRepositories, setSelectedRepositories] = React.useState<Set<string>>(new Set(['repo1', 'repo3', 'repo4', 'repo6', 'repo7']));
   const [reposToggleSelected, setReposToggleSelected] = React.useState<'toggle-repos-all' | 'toggle-repos-selected'>('toggle-repos-all');
   const [hasViewedReposSelected, setHasViewedReposSelected] = React.useState(false);
 
