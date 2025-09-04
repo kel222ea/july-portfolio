@@ -677,7 +677,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
               />
             </div>
           </FormGroup>
-                      {(searchInDropdown && searchTerm) || (showSearchRecommendations && !showRecommendations) && (
+                      {(searchInDropdown && searchTerm) || (showSearchRecommendations && !showRecommendations) ? (
             <div style={{
               position: 'absolute',
               top: '100%',
@@ -763,7 +763,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 )
               )}
             </div>
-          )}
+          ) : null}
         </div>
         
         {enableToggles && (
