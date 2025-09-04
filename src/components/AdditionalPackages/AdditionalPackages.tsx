@@ -416,16 +416,17 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     // Reset searching in other repos when search term changes
     if (value !== searchTerm) {
       setSearchingInOtherRepos(false);
-      
-      // Hide search recommendations when user starts typing
-      if (value) {
-        setShowSearchRecommendations(false);
-      }
-      // Show search recommendations when clearing search (if Package Recommendations toggle is OFF)
-      else if (!value && !showRecommendations) {
-        setShowSearchRecommendations(true);
-      }
     }
+    
+    // Hide search recommendations when user starts typing
+    if (value) {
+      setShowSearchRecommendations(false);
+    }
+    // Show search recommendations when clearing search (if Package Recommendations toggle is OFF)
+    else if (!value && !showRecommendations) {
+      setShowSearchRecommendations(true);
+    }
+    
     setPage(1);
   };
 
@@ -951,13 +952,13 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 />
               </div>
             </FormGroup>
-            {((searchInDropdown || searchingInOtherRepos) && searchTerm) || (showSearchRecommendations && !showRecommendations) && (
+            {((searchInDropdown || searchingInOtherRepos) && searchTerm) || (showSearchRecommendations && !showRecommendations) ? (
               <div style={{
                 position: 'absolute',
                 top: '100%',
                 left: 0,
                 right: 0,
-                minWidth: '400px',
+                minWidth: '600px',
                 backgroundColor: 'white',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
@@ -1103,7 +1104,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                   )
                 )}
               </div>
-            )}
+            ) : null}
           </div>
 
           
