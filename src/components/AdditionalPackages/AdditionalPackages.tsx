@@ -389,26 +389,31 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     if (searchInDropdown) {
       filtered = filtered.filter(repo => selectedRepositories.has(repo.id));
     } else {
-      // When searchInDropdown is disabled, use original behavior
-      // Apply search term filtering to table
-      if (searchTerm) {
-        filtered = filtered.filter(repo => 
-          repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          repo.url.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-      
-      // Apply toggle filtering
-      if (reposToggleSelected === 'toggle-repos-selected') {
+      // When checkboxes are disabled, only show selected repositories
+      if (!enableCheckboxes) {
         filtered = filtered.filter(repo => selectedRepositories.has(repo.id));
-        if (!hasViewedReposSelected) {
-          setHasViewedReposSelected(true);
+      } else {
+        // When checkboxes are enabled, use original behavior
+        // Apply search term filtering to table
+        if (searchTerm) {
+          filtered = filtered.filter(repo => 
+            repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            repo.url.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        }
+        
+        // Apply toggle filtering
+        if (reposToggleSelected === 'toggle-repos-selected') {
+          filtered = filtered.filter(repo => selectedRepositories.has(repo.id));
+          if (!hasViewedReposSelected) {
+            setHasViewedReposSelected(true);
+          }
         }
       }
     }
     
     return filtered;
-  }, [searchTerm, searchInDropdown, reposToggleSelected, selectedRepositories, hasViewedReposSelected]);
+  }, [searchTerm, searchInDropdown, reposToggleSelected, selectedRepositories, hasViewedReposSelected, enableCheckboxes]);
 
   // Event handlers
   const handleSearch = (value: string) => {
