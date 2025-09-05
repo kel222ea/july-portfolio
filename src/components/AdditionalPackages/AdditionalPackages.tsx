@@ -1119,7 +1119,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           {enableToggles && !searchInDropdown && (
           <ToggleGroup>
             <ToggleGroupItem
-                text={`Available (${availableCount})`}
+                text={`Available${searchTerm ? ` (${availableCount})` : ''}`}
               buttonId="toggle-available"
               isSelected={toggleSelected === 'toggle-available'}
                 onChange={() => handleAvailableToggle()}
