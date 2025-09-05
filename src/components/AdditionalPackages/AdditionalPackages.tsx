@@ -222,15 +222,15 @@ const allPackageRecommendations: Package[] = [
 
 const mockRepositories: Repository[] = [
   { id: 'repo1', name: 'Selected Repository', url: 'https://dl.fedoraproject.org/pub/epel/', arch: 'x86_64', version: '8', packages: 15000, status: 'Active' },
-  { id: 'repo2', name: 'RPM Fusion', url: 'https://rpmfusion.org/', arch: 'x86_64', version: '8', packages: 8000, status: 'Active' },
+  { id: 'repo2', name: 'Available Repository', url: 'Added to Insights Account', arch: 'x86_64', version: '8', packages: 8000, status: 'Active' },
   { id: 'repo3', name: 'Selected Repository', url: 'https://internal.company.com/repos/', arch: 'x86_64', version: '8', packages: 2500, status: 'Active' },
   { id: 'repo4', name: 'Selected Repository', url: 'https://mirror.stream.centos.org/', arch: 'x86_64', version: '9', packages: 12000, status: 'Active' },
-  { id: 'repo5', name: 'Fedora Rawhide', url: 'https://download.fedoraproject.org/pub/fedora/linux/development/rawhide/', arch: 'x86_64', version: '40', packages: 25000, status: 'Active' },
+  { id: 'repo5', name: 'Available Repository', url: 'Added to Insights Account', arch: 'x86_64', version: '40', packages: 25000, status: 'Active' },
   { id: 'repo6', name: 'Selected Repository', url: 'https://cdn.redhat.com/content/dist/rhel8/', arch: 'x86_64', version: '8', packages: 18000, status: 'Active' },
   { id: 'repo7', name: 'Selected Repository', url: 'https://cdn.redhat.com/content/dist/rhel9/', arch: 'x86_64', version: '9', packages: 20000, status: 'Active' },
-  { id: 'repo8', name: 'AlmaLinux 8', url: 'https://repo.almalinux.org/almalinux/8/', arch: 'x86_64', version: '8', packages: 16000, status: 'Active' },
-  { id: 'repo9', name: 'Rocky Linux 8', url: 'https://download.rockylinux.org/pub/rocky/8/', arch: 'x86_64', version: '8', packages: 15000, status: 'Active' },
-  { id: 'repo10', name: 'Oracle Linux 8', url: 'https://yum.oracle.com/repo/OracleLinux/OL8/', arch: 'x86_64', version: '8', packages: 14000, status: 'Active' },
+  { id: 'repo8', name: 'Available Repository', url: 'Added to Insights Account', arch: 'x86_64', version: '8', packages: 16000, status: 'Active' },
+  { id: 'repo9', name: 'Available Repository', url: 'Added to Insights Account', arch: 'x86_64', version: '8', packages: 15000, status: 'Active' },
+  { id: 'repo10', name: 'Available Repository', url: 'Added to Insights Account', arch: 'x86_64', version: '8', packages: 14000, status: 'Active' },
 ];
 
 export const AdditionalPackages: React.FunctionComponent = () => {
