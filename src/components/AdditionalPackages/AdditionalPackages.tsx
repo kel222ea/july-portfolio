@@ -498,6 +498,22 @@ export const AdditionalPackages: React.FunctionComponent = () => {
     }
   };
 
+  // Helper function to get display name for repositories
+  const getRepositoryDisplayName = (repo: Repository) => {
+    if (selectedRepositories.has(repo.id)) {
+      return 'Selected Repository';
+    }
+    return repo.name;
+  };
+
+  // Helper function to get display name for packages
+  const getPackageDisplayName = (pkg: Package) => {
+    if (selectedPackages.has(pkg.name)) {
+      return 'Selected Package';
+    }
+    return pkg.name;
+  };
+
   const handleReposToggleChange = (event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>, selected: boolean) => {
     const buttonId = event.currentTarget.getAttribute('data-button-id');
     if (buttonId === 'toggle-repos-all') {
@@ -728,7 +744,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       }}
                     >
                       <div>
-                        <strong>{repo.name}</strong>
+                        <strong>{getRepositoryDisplayName(repo)}</strong>
                         <br />
                         <small style={{ color: '#666' }}>{repo.url}</small>
                       </div>
@@ -849,7 +865,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                   <Td>
                     <div>
                       <strong>
-                        {repo.name}
+                        {getRepositoryDisplayName(repo)}
                       </strong>
                       <br />
                       {repo.url === 'Added to Insights Account' ? (
@@ -1034,7 +1050,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                           </div>
                           <div style={{ flex: 1 }}>
                             <div style={{ fontWeight: '600', marginBottom: '2px' }}>
-                              {pkg.name} - {pkg.summary}
+                              {getPackageDisplayName(pkg)} - {pkg.summary}
                             </div>
                           </div>
                           <span style={{ 
@@ -1077,7 +1093,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                       }}
                     >
                       <div>
-                        <strong>{pkg.name}</strong>
+                        <strong>{getPackageDisplayName(pkg)}</strong>
                         <br />
                         <small style={{ color: '#666' }}>{pkg.summary}</small>
                       </div>
@@ -1196,7 +1212,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                     />
                   </Td>
                     )}
-                    <Td>{pkg.name}</Td>
+                    <Td>{getPackageDisplayName(pkg)}</Td>
                     <Td>{pkg.source}</Td>
                     <Td>{pkg.summary}</Td>
                     {!enableCheckboxes && (
@@ -1278,7 +1294,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 <Tbody>
                   {currentRecommendations.map((pkg) => (
                     <Tr key={pkg.name}>
-                      <Td>{pkg.name}</Td>
+                      <Td>{getPackageDisplayName(pkg)}</Td>
                       <Td>{pkg.source}</Td>
                       <Td>{pkg.summary}</Td>
                       <Td>
