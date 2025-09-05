@@ -267,6 +267,9 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   // Computed values for packages
   const selectedCount = selectedPackages.size;
   const totalAvailableItems = includedRepoPackages.length + otherRepoPackages.length;
+  
+  // Available packages count (total minus selected)
+  const availableCount = totalAvailableItems - selectedCount;
 
   // Current recommendations (excluding already added ones)
   const currentRecommendations = React.useMemo(() => {
@@ -1116,7 +1119,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           {enableToggles && !searchInDropdown && (
           <ToggleGroup>
             <ToggleGroupItem
-                text={`Available (${totalAvailableItems})`}
+                text={`Available (${availableCount})`}
               buttonId="toggle-available"
               isSelected={toggleSelected === 'toggle-available'}
                 onChange={() => handleAvailableToggle()}
