@@ -271,6 +271,14 @@ export const AdditionalPackages: React.FunctionComponent = () => {
   // Available packages count (total minus selected)
   const availableCount = totalAvailableItems - selectedCount;
 
+  // Count of actually selected packages in the current filtered view
+  const currentSelectedCount = React.useMemo(() => {
+    if (toggleSelected === 'toggle-selected') {
+      return filteredPackages.length;
+    }
+    return selectedPackages.size;
+  }, [toggleSelected, filteredPackages.length, selectedPackages.size]);
+
   // Current recommendations (excluding already added ones)
   const currentRecommendations = React.useMemo(() => {
     return allPackageRecommendations
@@ -1145,7 +1153,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                 onChange={() => handleAvailableToggle()}
             />
             <ToggleGroupItem
-              text={`Selected${selectedCount ? ` (${selectedCount})` : ''}`}
+              text={`Selected${currentSelectedCount ? ` (${currentSelectedCount})` : ''}`}
               buttonId="toggle-selected"
               isSelected={toggleSelected === 'toggle-selected'}
                 onChange={() => handleSelectedToggle()}
@@ -1155,7 +1163,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
           
           {enableToggles && searchInDropdown && (
           <div style={{ color: '#666', fontSize: '14px' }}>
-            Selected packages: {selectedCount}
+            Selected packages: {currentSelectedCount}
           </div>
           )}
         </div>
