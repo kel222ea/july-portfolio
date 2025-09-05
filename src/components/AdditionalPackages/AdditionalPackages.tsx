@@ -852,15 +852,19 @@ export const AdditionalPackages: React.FunctionComponent = () => {
                         {repo.name}
                       </strong>
                       <br />
-                      <Button
-                        component="a"
-                        target="_blank"
-                        variant="link"
-                        isInline
-                        href={repo.url}
-                      >
-                        {repo.url}
-                      </Button>
+                      {repo.url === 'Added to Insights Account' ? (
+                        <small style={{ color: '#666' }}>{repo.url}</small>
+                      ) : (
+                        <Button
+                          component="a"
+                          target="_blank"
+                          variant="link"
+                          isInline
+                          href={repo.url}
+                        >
+                          {repo.url}
+                        </Button>
+                      )}
                     </div>
                   </Td>
                   <Td>{repo.arch}</Td>
