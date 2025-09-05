@@ -785,7 +785,7 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         {enableToggles && !searchInDropdown && (
         <ToggleGroup aria-label="Filter repositories list">
           <ToggleGroupItem
-              text={`All${mockRepositories ? ` (${hasViewedReposSelected ? mockRepositories.length - selectedRepositories.size : mockRepositories.length})` : ''}`}
+              text={`All (${mockRepositories.length})`}
             aria-label="All repositories"
             buttonId="toggle-repos-all"
             isSelected={reposToggleSelected === 'toggle-repos-all'}
