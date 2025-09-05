@@ -338,8 +338,8 @@ export const AdditionalPackages: React.FunctionComponent = () => {
         return nameMatch;
       });
       
-      // Apply toggle filtering only if there's no search term
-      if (toggleSelected === 'toggle-selected' && !searchTerm) {
+      // Apply toggle filtering
+      if (toggleSelected === 'toggle-selected') {
         filtered = filtered.filter(pkg => selectedPackages.has(pkg.name));
         if (!hasViewedPackagesSelected) {
           setHasViewedPackagesSelected(true);
